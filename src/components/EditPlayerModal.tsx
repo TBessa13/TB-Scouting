@@ -35,6 +35,8 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
   const [pipelineStage, setPipelineStage] = useState<'Sinalizado' | 'Em Análise' | 'Analisado' | undefined>(
     player.pipelineStage
   );
+  const [tacticalFitPercent, setTacticalFitPercent] = useState<number>(player.tacticalFitPercent || 75);
+  const [rating, setRating] = useState<number>(player.rating || 3);
 
   // Notes
   const [tecnicaNote, setTecnicaNote] = useState(player.notes?.tecnica || '');
@@ -83,6 +85,8 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
       position,
       status,
       pipelineStage,
+      rating: Number(rating) || 3,
+      tacticalFitPercent: Number(tacticalFitPercent) || 75,
       notes: {
         ...player.notes,
         tecnica: tecnicaNote,
@@ -307,6 +311,49 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
                   <option value="Em Análise">Em Análise</option>
                   <option value="Analisado">Analisado</option>
                 </select>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[11px] font-bold text-[#e4bebc] uppercase">
+                    Adequação Tática (%)
+                  </label>
+                  <span className="font-mono-data font-bold text-xs text-[#ff535b]">
+                    {tacticalFitPercent}%
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={tacticalFitPercent}
+                    onChange={(e) => setTacticalFitPercent(Number(e.target.value))}
+                    className="flex-1 accent-[#ff535b] cursor-pointer h-1.5 rounded-lg bg-[#0e0e0f]"
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={tacticalFitPercent}
+                    onChange={(e) => setTacticalFitPercent(Math.min(100, Math.max(0, Number(e.target.value))))}
+                    className="w-14 bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs text-center font-mono-data rounded-xl py-1.5 outline-none focus:border-[#ff535b]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
+                  Rating Geral / Avaliação (1 - 20)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={rating}
+                  onChange={(e) => setRating(Math.min(20, Math.max(1, Number(e.target.value))))}
+                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs font-mono-data rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
+                />
               </div>
             </div>
           </div>
