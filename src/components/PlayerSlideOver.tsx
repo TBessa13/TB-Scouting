@@ -25,6 +25,7 @@ export function getFormattedCurrentDate(): string {
 import { AIReportModal } from './AIReportModal';
 import { AttachmentsSection } from './AttachmentsSection';
 import { StarRating } from './StarRating';
+import { EditPlayerModal } from './EditPlayerModal';
 
 export interface SimilarMatch {
   player: Player;
@@ -163,6 +164,7 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
   const [isAiReportOpen, setIsAiReportOpen] = useState(false);
   const [isSimilarModalOpen, setIsSimilarModalOpen] = useState(false);
   const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTmModalOpen, setIsTmModalOpen] = useState(false);
   const [tmInputUrl, setTmInputUrl] = useState('');
   const [newNoteText, setNewNoteText] = useState('');
@@ -461,14 +463,26 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
             </div>
           </div>
 
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-[#353436] text-[#e4bebc] hover:text-[#e5e2e3] transition-colors"
-            title="Fechar"
-          >
-            <span className="material-symbols-outlined text-[24px]">close</span>
-          </button>
+          {/* Header Action Buttons (Edit + Close) */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsEditModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0b4e6e] hover:brightness-110 text-[#8abfe4] border border-[#0b4e6e] text-xs font-bold transition-all shadow cursor-pointer active:scale-95"
+              title="Editar dados e definições do atleta"
+            >
+              <span className="material-symbols-outlined text-[16px]">edit</span>
+              <span>Editar</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-full hover:bg-[#353436] text-[#e4bebc] hover:text-[#e5e2e3] transition-colors"
+              title="Fechar"
+            >
+              <span className="material-symbols-outlined text-[24px]">close</span>
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Content */}
@@ -1025,6 +1039,21 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* EDIT PLAYER MODAL */}
+      {isEditModalOpen && (
+        <EditPlayerModal
+          player={player}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSavePlayer={(updated) => {
+            if (onUpdatePlayer) {
+              onUpdatePlayer(updated);
+            }
+            onTriggerToast(`Ficha de ${updated.name} atualizada com sucesso!`);
+          }}
+        />
       )}
     </div>
   );
