@@ -1020,14 +1020,7 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
                           <FootIndicator foot={p.dominantFoot} showLabel />
                         </div>
                       </div>
-                      <div className="flex flex-col mt-2">
-                        <span className="text-[10px] uppercase font-bold text-[#e4bebc]">
-                          Valor Estimado
-                        </span>
-                        <span className="font-mono-data font-bold text-[#8abfe4]">
-                          {p.marketValueFormatted}
-                        </span>
-                      </div>
+
                       <div className="flex flex-col mt-2">
                         <span className="text-[10px] uppercase font-bold text-[#e4bebc]">
                           Fim do Contrato

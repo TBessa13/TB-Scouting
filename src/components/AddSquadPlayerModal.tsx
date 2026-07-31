@@ -34,7 +34,6 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
   const [flag, setFlag] = useState('🇵🇹');
   const [club, setClub] = useState('Plantel Principal');
   const [contractEnd, setContractEnd] = useState('Jun 2026');
-  const [marketValue, setMarketValue] = useState<number>(5000000);
   const [dominantFoot, setDominantFoot] = useState<'Direito' | 'Esquerdo' | 'Ambidestro'>('Direito');
   const [agent, setAgent] = useState('Livre / Próprio');
   const [rating, setRating] = useState<number>(4);
@@ -72,11 +71,6 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
     e.preventDefault();
     if (!name.trim()) return;
 
-    const formattedValue =
-      marketValue >= 1000000
-        ? `€${(marketValue / 1000000).toFixed(1)}M`
-        : `€${(marketValue / 1000).toFixed(0)}K`;
-
     const newPlayer: Player = {
       id: `sq_created_${Date.now()}`,
       name: name.trim(),
@@ -89,8 +83,6 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
       club: club || 'Plantel Principal',
       league: 'Liga Portugal',
       contractEnd: contractEnd || 'Jun 2026',
-      marketValueValue: Number(marketValue) || 1000000,
-      marketValueFormatted: formattedValue,
       agent: agent || 'Livre',
       dominantFoot: dominantFoot,
       position: position,
@@ -342,18 +334,7 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
-                    Valor de Mercado (€)
-                  </label>
-                  <input
-                    type="number"
-                    step={100000}
-                    value={marketValue}
-                    onChange={(e) => setMarketValue(Number(e.target.value))}
-                    className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b] font-mono-data"
-                  />
-                </div>
+
 
                 <div>
                   <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">

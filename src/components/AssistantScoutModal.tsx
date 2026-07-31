@@ -328,7 +328,7 @@ export const AssistantScoutModal: React.FC<AssistantScoutModalProps> = ({
         }
 
         replyText = `### 🎯 Pontas de Lança em Situação Contratual Vulnerável\n\nIdentifiquei **${matchedPlayers.length} avançados** da base de prospeção em fim de contrato próximo:\n\n` +
-          matchedPlayers.map(p => `- **${p.name}** (${p.club}) — ${p.contractEnd} | Valor: ${p.marketValueFormatted} | Fit: **${p.tacticalFitPercent}%**`).join('\n') +
+          matchedPlayers.map(p => `- **${p.name}** (${p.club}) — ${p.contractEnd} | Fit: **${p.tacticalFitPercent}%**`).join('\n') +
           `\n\n*Nota Tática:* Perfil de finalização imediata com excelente oportunidade de mercado a custo zero ou negociável.`;
 
         actionExec = '⚡ Ação: Tabela filtrada para Pontas de Lança em fim de contrato';

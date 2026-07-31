@@ -20,7 +20,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
   const [club, setClub] = useState('');
   const [league, setLeague] = useState('Liga Portugal');
   const [contractEnd, setContractEnd] = useState('Jun 2025');
-  const [marketValueValue, setMarketValueValue] = useState<number | ''>(3500000);
   const [agent, setAgent] = useState('');
   const [dominantFoot, setDominantFoot] = useState<'Direito' | 'Esquerdo' | 'Ambidestro'>('Direito');
   const [position, setPosition] = useState<PositionCode>('PL');
@@ -75,9 +74,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
 
   const handleConfirmStep3 = () => {
     const calculatedAge = calculateAge(birthDate);
-    const formattedVal = typeof marketValueValue === 'number'
-      ? `€${(marketValueValue / 1000000).toFixed(1)}M`
-      : '€3.5M';
 
     const flagMap: Record<string, string> = {
       Portugal: '🇵🇹',
@@ -101,8 +97,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
       club: club.trim() || 'Sem Clube / Livre',
       league: league.trim() || 'Liga Portugal',
       contractEnd: contractEnd || 'Jun 2025',
-      marketValueValue: Number(marketValueValue) || 3500000,
-      marketValueFormatted: formattedVal,
       agent: agent.trim() || 'Sem Agente Registado',
       dominantFoot,
       position,
@@ -277,20 +271,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
                 required
                 className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] font-mono-data px-3 py-2 text-sm focus:border-[#98cdf2] focus:outline-none"
               />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-[#e4bebc] uppercase tracking-wider">Valor de Mercado Estimado (€)</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#e4bebc] font-mono-data">€</span>
-                <input
-                  type="number"
-                  value={marketValueValue}
-                  onChange={(e) => setMarketValueValue(e.target.value ? Number(e.target.value) : '')}
-                  placeholder="3500000"
-                  className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] font-mono-data pl-8 pr-3 py-2 text-sm focus:border-[#98cdf2] focus:outline-none"
-                />
-              </div>
             </div>
 
             <div className="flex flex-col gap-1.5">

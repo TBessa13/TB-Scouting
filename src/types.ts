@@ -101,8 +101,6 @@ export interface Player {
   club: string;
   league?: string;
   contractEnd: string;
-  marketValueValue?: number; // in Euros
-  marketValueFormatted?: string;
   agent: string;
   dominantFoot: 'Direito' | 'Esquerdo' | 'Ambidestro';
   position: PositionCode;

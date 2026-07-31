@@ -891,7 +891,6 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
                         {fieldsConfig.showHeight && <th className="p-2">Altura</th>}
                         {fieldsConfig.showFoot && <th className="p-2">Pé</th>}
                         {fieldsConfig.showContract && <th className="p-2">Contrato</th>}
-                        {fieldsConfig.showMarketValue && <th className="p-2">Valor</th>}
                         {fieldsConfig.showAgent && <th className="p-2">Agente</th>}
                       </tr>
                     </thead>
@@ -921,11 +920,6 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
                           )}
                           {fieldsConfig.showContract && (
                             <td className="p-2 font-mono-data text-[#e5e2e3]">{p.contractEnd}</td>
-                          )}
-                          {fieldsConfig.showMarketValue && (
-                            <td className="p-2 font-mono-data text-[#98cdf2] font-bold">
-                              {p.marketValueFormatted}
-                            </td>
                           )}
                           {fieldsConfig.showAgent && (
                             <td className="p-2 text-[#e5e2e3]">{p.agent}</td>
@@ -1028,10 +1022,6 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
                           <span>{p.age}a</span>
                           <span>•</span>
                           <FootIndicator foot={p.dominantFoot} size="xs" />
-                          <span>•</span>
-                          <span className="font-mono-data text-[#98cdf2] font-bold">
-                            {p.marketValueFormatted}
-                          </span>
                         </div>
                       </div>
                     </div>
@@ -1131,7 +1121,7 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
                     <div className="flex flex-col">
                       <span className="font-bold text-xs text-[#e5e2e3]">{p.name}</span>
                       <span className="text-[11px] text-[#e4bebc]">
-                        {p.club} • {p.position} • {p.marketValueFormatted}
+                        {p.club} • {p.position}
                       </span>
                     </div>
                     <div>

@@ -62,7 +62,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       xmlLines.push(`      <Age>${player.age}</Age>`);
       xmlLines.push(`      <Club>${escapeXml(player.club)}</Club>`);
       xmlLines.push(`      <Nationality>${escapeXml(player.nationality)}</Nationality>`);
-      xmlLines.push(`      <MarketValue>${escapeXml(player.marketValue)}</MarketValue>`);
       xmlLines.push(`      <Status>${escapeXml(player.status)}</Status>`);
       xmlLines.push(`      <OverallScore>${player.overallScore}</OverallScore>`);
       xmlLines.push(`      <PotentialScore>${player.potentialScore}</PotentialScore>`);
@@ -113,7 +112,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   };
 
   const handleExportCsv = () => {
-    const headers = ['ID', 'Nome', 'Posicao', 'Idade', 'Clube', 'Nacionalidade', 'ValorMercado', 'Estado', 'NotaGeral', 'Potencial', 'FimContrato', 'TransfermarktUrl'];
+    const headers = ['ID', 'Nome', 'Posicao', 'Idade', 'Clube', 'Nacionalidade', 'Estado', 'NotaGeral', 'Potencial', 'FimContrato', 'TransfermarktUrl'];
     const rows = players.map(p => [
       p.id,
       `"${p.name.replace(/"/g, '""')}"`,
@@ -121,7 +120,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       p.age,
       `"${p.club.replace(/"/g, '""')}"`,
       `"${p.nationality.replace(/"/g, '""')}"`,
-      `"${p.marketValue.replace(/"/g, '""')}"`,
       p.status,
       p.overallScore,
       p.potentialScore,

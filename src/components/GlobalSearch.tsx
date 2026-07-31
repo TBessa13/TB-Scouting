@@ -323,7 +323,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
                             </span>
                           </div>
                           <span className="text-[10px] text-[#e4bebc]/70 truncate">
-                            {player.club} | {player.nationality} | Val: {player.marketValueFormatted}
+                            {player.club} | {player.nationality}
                           </span>
                         </div>
                       </div>
