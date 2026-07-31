@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 interface StarRatingProps {
-  value: number; // 1 to 5 scale (integer)
+  value?: number | string | null; // 1 to 5 scale (or null if unevaluated)
   onChange?: (newValue: number) => void;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   variant?: 'single' | 'stars';
@@ -23,13 +23,14 @@ export const StarRating: React.FC<StarRatingProps> = ({
 }) => {
   const [hoverValue, setHoverValue] = useState<number | null>(null);
 
-  // Strictly integer value from 1 to 5
-  const rawNum = value <= 5 ? value : value / 4;
-  const intVal = Math.min(5, Math.max(1, Math.round(rawNum)));
+  const isUnevaluated = value == null || value === 0 || value === '-';
 
-  const displayVal = hoverValue !== null ? hoverValue : intVal;
-
-  const isSingleMode = variant ? variant === 'single' : readOnly;
+  const textSizes = {
+    xs: 'text-xs',
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base',
+  };
 
   const starIconSizes = {
     xs: 'text-[13px]',
@@ -38,12 +39,23 @@ export const StarRating: React.FC<StarRatingProps> = ({
     lg: 'text-[22px]',
   };
 
-  const textSizes = {
-    xs: 'text-xs',
-    sm: 'text-xs',
-    md: 'text-sm',
-    lg: 'text-base',
-  };
+  if (isUnevaluated && readOnly) {
+    return (
+      <div className={`inline-flex items-center gap-1 shrink-0 font-mono-data font-bold select-none text-[#e4bebc]/60 ${className}`}>
+        <span className={`${textSizes[size]} leading-none font-bold`}>
+          -
+        </span>
+      </div>
+    );
+  }
+
+  const numericVal = typeof value === 'number' ? value : Number(value) || 0;
+  const rawNum = numericVal <= 5 ? numericVal : numericVal / 4;
+  const intVal = Math.min(5, Math.max(1, Math.round(rawNum)));
+
+  const displayVal = hoverValue !== null ? hoverValue : intVal;
+
+  const isSingleMode = variant ? variant === 'single' : readOnly;
 
   if (isSingleMode) {
     return (

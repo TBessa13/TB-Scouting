@@ -35,8 +35,19 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
   const [pipelineStage, setPipelineStage] = useState<'Sinalizado' | 'Em Análise' | 'Analisado' | undefined>(
     player.pipelineStage
   );
-  const [tacticalFitPercent, setTacticalFitPercent] = useState<number>(player.tacticalFitPercent || 75);
-  const [rating, setRating] = useState<number>(player.rating || 3);
+  const [tacticalFitPercent, setTacticalFitPercent] = useState<number | null>(
+    player.tacticalFitPercent !== undefined ? player.tacticalFitPercent : null
+  );
+  const [isTacticalUnevaluated, setIsTacticalUnevaluated] = useState<boolean>(
+    player.tacticalFitPercent == null || player.tacticalFitPercent === 0
+  );
+
+  const [rating, setRating] = useState<number | null>(
+    player.rating !== undefined ? player.rating : null
+  );
+  const [isRatingUnevaluated, setIsRatingUnevaluated] = useState<boolean>(
+    player.rating == null || player.rating === 0
+  );
 
   // Notes
   const [tecnicaNote, setTecnicaNote] = useState(player.notes?.tecnica || '');
@@ -85,8 +96,8 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
       position,
       status,
       pipelineStage,
-      rating: Number(rating) || 3,
-      tacticalFitPercent: Number(tacticalFitPercent) || 75,
+      rating: isRatingUnevaluated ? null : (rating ?? 3),
+      tacticalFitPercent: isTacticalUnevaluated ? null : (tacticalFitPercent ?? 75),
       notes: {
         ...player.notes,
         tecnica: tecnicaNote,
@@ -313,47 +324,90 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
                 </select>
               </div>
 
+              {/* Adequação Tática (%) */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-[11px] font-bold text-[#e4bebc] uppercase">
                     Adequação Tática (%)
                   </label>
-                  <span className="font-mono-data font-bold text-xs text-[#ff535b]">
-                    {tacticalFitPercent}%
-                  </span>
+                  <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={isTacticalUnevaluated}
+                      onChange={(e) => {
+                        setIsTacticalUnevaluated(e.target.checked);
+                        if (!e.target.checked && (tacticalFitPercent == null || tacticalFitPercent === 0)) {
+                          setTacticalFitPercent(75);
+                        }
+                      }}
+                      className="accent-[#ff535b] rounded cursor-pointer"
+                    />
+                    <span className="text-[10px] text-[#e4bebc] font-bold">Pendente (-)</span>
+                  </label>
                 </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min={0}
-                    max={100}
-                    value={tacticalFitPercent}
-                    onChange={(e) => setTacticalFitPercent(Number(e.target.value))}
-                    className="flex-1 accent-[#ff535b] cursor-pointer h-1.5 rounded-lg bg-[#0e0e0f]"
-                  />
-                  <input
-                    type="number"
-                    min={0}
-                    max={100}
-                    value={tacticalFitPercent}
-                    onChange={(e) => setTacticalFitPercent(Math.min(100, Math.max(0, Number(e.target.value))))}
-                    className="w-14 bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs text-center font-mono-data rounded-xl py-1.5 outline-none focus:border-[#ff535b]"
-                  />
-                </div>
+
+                {isTacticalUnevaluated ? (
+                  <div className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e4bebc]/60 text-xs font-mono-data rounded-xl px-3 py-2 text-center font-bold">
+                    Pendente de Avaliação (-)
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      value={tacticalFitPercent ?? 75}
+                      onChange={(e) => setTacticalFitPercent(Number(e.target.value))}
+                      className="flex-1 accent-[#ff535b] cursor-pointer h-1.5 rounded-lg bg-[#0e0e0f]"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={tacticalFitPercent ?? 75}
+                      onChange={(e) => setTacticalFitPercent(Math.min(100, Math.max(0, Number(e.target.value))))}
+                      className="w-14 bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs text-center font-mono-data rounded-xl py-1.5 outline-none focus:border-[#ff535b]"
+                    />
+                  </div>
+                )}
               </div>
 
+              {/* Rating Geral (1-20) */}
               <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
-                  Rating Geral / Avaliação (1 - 20)
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={rating}
-                  onChange={(e) => setRating(Math.min(20, Math.max(1, Number(e.target.value))))}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs font-mono-data rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
-                />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[11px] font-bold text-[#e4bebc] uppercase">
+                    Rating Geral (1 - 20)
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={isRatingUnevaluated}
+                      onChange={(e) => {
+                        setIsRatingUnevaluated(e.target.checked);
+                        if (!e.target.checked && (rating == null || rating === 0)) {
+                          setRating(3);
+                        }
+                      }}
+                      className="accent-[#ff535b] rounded cursor-pointer"
+                    />
+                    <span className="text-[10px] text-[#e4bebc] font-bold">Pendente (-)</span>
+                  </label>
+                </div>
+
+                {isRatingUnevaluated ? (
+                  <div className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e4bebc]/60 text-xs font-mono-data rounded-xl px-3 py-2 text-center font-bold">
+                    Pendente de Avaliação (-)
+                  </div>
+                ) : (
+                  <input
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={rating ?? 3}
+                    onChange={(e) => setRating(Math.min(20, Math.max(1, Number(e.target.value))))}
+                    className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs font-mono-data rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
+                  />
+                )}
               </div>
             </div>
           </div>

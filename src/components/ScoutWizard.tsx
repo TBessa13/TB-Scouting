@@ -84,8 +84,8 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
       dominantFoot,
       position,
       status: 'track',
-      rating: 3,
-      tacticalFitPercent: 75,
+      rating: null,
+      tacticalFitPercent: null,
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       notes: {
         tecnica: 'Sinalizado para avaliação posterior.',

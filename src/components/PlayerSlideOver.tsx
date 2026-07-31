@@ -586,19 +586,19 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
             <div className="flex justify-between items-end relative z-10">
               <span className="text-sm font-bold text-[#e5e2e3]">Adequação Tática</span>
               <span className="text-2xl font-bold font-mono-data text-[#c7e7ff]">
-                {player.tacticalFitPercent}%
+                {player.tacticalFitPercent != null && player.tacticalFitPercent > 0 ? `${player.tacticalFitPercent}%` : '-'}
               </span>
             </div>
             {/* Progress Bar */}
             <div className="w-full h-3 bg-[#353436] rounded-full overflow-hidden relative z-10 border border-[#353436]">
               <div
                 className="h-full bg-gradient-to-r from-[#0b4e6e] via-[#8abfe4] to-[#ff535b] rounded-full shadow-[0_0_10px_rgba(152,205,242,0.4)]"
-                style={{ width: `${player.tacticalFitPercent}%` }}
+                style={{ width: `${player.tacticalFitPercent != null && player.tacticalFitPercent > 0 ? player.tacticalFitPercent : 0}%` }}
               />
             </div>
             <div className="flex justify-between text-[10px] text-[#e4bebc] font-bold tracking-wider uppercase">
-              <span>Baixa</span>
-              <span>Alta Prioridade</span>
+              <span>{player.tacticalFitPercent != null && player.tacticalFitPercent > 0 ? 'Baixa' : 'Pendente (-)'}</span>
+              <span>{player.tacticalFitPercent != null && player.tacticalFitPercent > 0 ? 'Alta Prioridade' : 'Sem Avaliação'}</span>
             </div>
           </section>
 

@@ -830,13 +830,13 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
                           <div className="flex justify-between items-center text-[11px]">
                             <span className="text-[#e4bebc]">Fit Tático</span>
                             <span className="font-mono-data font-bold text-[#ffb3b1]">
-                              {player.tacticalFitPercent}%
+                              {player.tacticalFitPercent != null && player.tacticalFitPercent > 0 ? `${player.tacticalFitPercent}%` : '-'}
                             </span>
                           </div>
                           <div className="w-full bg-[#0A0A0B] h-2 rounded-full overflow-hidden border border-[#26262B]">
                             <div
                               className="h-full rounded-full bg-gradient-to-r from-[#0b4e6e] via-[#8abfe4] to-[#ff535b]"
-                              style={{ width: `${player.tacticalFitPercent}%` }}
+                              style={{ width: `${player.tacticalFitPercent != null && player.tacticalFitPercent > 0 ? player.tacticalFitPercent : 0}%` }}
                             />
                           </div>
                         </div>
@@ -1037,13 +1037,13 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
                           Adequação Tática
                         </span>
                         <span className="font-mono-data font-bold text-[#ffb3b1]">
-                          {p.tacticalFitPercent}%
+                          {p.tacticalFitPercent != null && p.tacticalFitPercent > 0 ? `${p.tacticalFitPercent}%` : '-'}
                         </span>
                       </div>
                       <div className="w-full bg-[#141416] h-2.5 rounded-full overflow-hidden border border-[#26262B]">
                         <div
                           className="h-full rounded-full bg-gradient-to-r from-[#0b4e6e] via-[#8abfe4] to-[#ff535b]"
-                          style={{ width: `${p.tacticalFitPercent}%` }}
+                          style={{ width: `${p.tacticalFitPercent != null && p.tacticalFitPercent > 0 ? p.tacticalFitPercent : 0}%` }}
                         />
                       </div>
                     </div>

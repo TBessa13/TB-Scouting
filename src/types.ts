@@ -1,6 +1,7 @@
 export type RatingSystem = '5' | '10' | '20' | '100';
 
-export const getDisplayRating = (rating: number, _ratingSystem?: RatingSystem): number => {
+export const getDisplayRating = (rating?: number | null, _ratingSystem?: RatingSystem): number | string => {
+  if (rating == null || rating === 0) return '-';
   const num = rating <= 5 ? rating : rating / 4;
   return Math.min(5, Math.max(1, Math.round(num)));
 };
@@ -108,8 +109,8 @@ export interface Player {
   status: PlayerStatus;
   priorityRank?: PriorityRank;
   pipelineStage?: 'Sinalizado' | 'Em Análise' | 'Analisado';
-  rating: number; // 1 to 5
-  tacticalFitPercent: number;
+  rating?: number | null; // 1 to 5 (or null if unevaluated)
+  tacticalFitPercent?: number | null; // 0 to 100 (or null if unevaluated)
   avatarUrl: string;
   notes: ObservationNotes;
   timeline: TimelineEvent[];
