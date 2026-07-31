@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Player, PositionCode, RatingSystem, getPlayerAge } from '../types';
+import { NATIONALITY_OPTIONS, getFlagForNationality } from '../data/nationalities';
 import { StarRating } from './StarRating';
 import { Avatar } from './Avatar';
 
@@ -302,20 +303,24 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
                     Nacionalidade / Bandeira
                   </label>
                   <div className="flex gap-2">
-                    <input
-                      type="text"
+                    <select
                       value={nationality}
-                      onChange={(e) => setNationality(e.target.value)}
-                      placeholder="Portugal"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setNationality(val);
+                        setFlag(getFlagForNationality(val));
+                      }}
                       className="flex-1 bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
-                    />
-                    <input
-                      type="text"
-                      value={flag}
-                      onChange={(e) => setFlag(e.target.value)}
-                      placeholder="🇵🇹"
-                      className="w-14 text-center bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl py-2 outline-none focus:border-[#ff535b]"
-                    />
+                    >
+                      {NATIONALITY_OPTIONS.map((n) => (
+                        <option key={n.name} value={n.name}>
+                          {n.flag} {n.name}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="w-14 text-center bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-sm rounded-xl py-2 flex items-center justify-center">
+                      {flag}
+                    </span>
                   </div>
                 </div>
 

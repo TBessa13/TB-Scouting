@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Player, PlayerStatus, PositionCode, RatingSystem, convertCategoryInputToBase20, getSystemMaxVal } from '../types';
+import { NATIONALITY_OPTIONS, getFlagForNationality } from '../data/nationalities';
 import { StarRating } from './StarRating';
 
 interface ScoutWizardProps {
@@ -75,16 +76,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
   const handleConfirmStep3 = () => {
     const calculatedAge = calculateAge(birthDate);
 
-    const flagMap: Record<string, string> = {
-      Portugal: '🇵🇹',
-      Brasil: '🇧🇷',
-      Espanha: '🇪🇸',
-      Argentina: '🇦🇷',
-      França: '🇫🇷',
-      Croácia: '🇭🇷',
-      Outro: '🌍'
-    };
-
     const newPlayer: Player = {
       id: `p_${Date.now()}`,
       name: name.trim() || 'Novo Alvo',
@@ -93,7 +84,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
       age: calculatedAge,
       heightCm: Number(heightCm) || 180,
       nationality: nationality || 'Portugal',
-      flag: flagMap[nationality] || flag || '🇵🇹',
+      flag: getFlagForNationality(nationality || 'Portugal'),
       club: club.trim() || 'Sem Clube / Livre',
       league: league.trim() || 'Liga Portugal',
       contractEnd: contractEnd || 'Jun 2025',
@@ -221,13 +212,11 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
                 onChange={(e) => setNationality(e.target.value)}
                 className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] px-3 py-2 text-sm focus:border-[#98cdf2] focus:outline-none"
               >
-                <option value="Portugal">Portugal</option>
-                <option value="Brasil">Brasil</option>
-                <option value="Espanha">Espanha</option>
-                <option value="Argentina">Argentina</option>
-                <option value="França">França</option>
-                <option value="Croácia">Croácia</option>
-                <option value="Outro">Outro</option>
+                {NATIONALITY_OPTIONS.map((n) => (
+                  <option key={n.name} value={n.name}>
+                    {n.flag} {n.name}
+                  </option>
+                ))}
               </select>
             </div>
 
