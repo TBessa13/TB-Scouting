@@ -61,6 +61,56 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
     setStep(3);
   };
 
+  const handleQuickSaveFromStep1 = () => {
+    if (!name.trim()) {
+      alert('Por favor, introduza o nome do jogador.');
+      return;
+    }
+    const calculatedAge = calculateAge(birthDate);
+
+    const newPlayer: Player = {
+      id: `p_${Date.now()}`,
+      name: name.trim() || 'Novo Alvo',
+      shortName: (name.split(' ').pop() || name).trim(),
+      birthDate: birthDate || '2002-05-14',
+      age: calculatedAge,
+      heightCm: Number(heightCm) || 180,
+      nationality: nationality || 'Portugal',
+      flag: getFlagForNationality(nationality || 'Portugal'),
+      club: club.trim() || 'Sem Clube / Livre',
+      league: league.trim() || 'Liga Portugal',
+      contractEnd: contractEnd || 'Jun 2025',
+      agent: agent.trim() || 'Sem Agente Registado',
+      dominantFoot,
+      position,
+      status: 'track',
+      rating: 3,
+      tacticalFitPercent: 75,
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      notes: {
+        tecnica: 'Sinalizado para avaliação posterior.',
+        tatica: 'Sinalizado para avaliação posterior.',
+        fisica: 'Sinalizado para avaliação posterior.',
+        psicologica: 'Sinalizado para avaliação posterior.',
+      },
+      timeline: [
+        {
+          id: `t_${Date.now()}`,
+          date: new Date().toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase(),
+          title: 'Sinalizado na Base de Dados (Pendente de Avaliação)',
+          scout: 'Director / Scout Senior',
+          rating: 6
+        }
+      ],
+      wyscoutUrl,
+      hudlUrl,
+      transfermarktUrl: transfermarktUrl.trim() || undefined,
+      isContractExpiringSoon: contractEnd.includes('2024') || contractEnd.includes('2025')
+    };
+
+    onSavePlayer(newPlayer);
+  };
+
   const calculateAge = (dob: string): number => {
     if (!dob) return 22;
     const birth = new Date(dob);
@@ -316,10 +366,19 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
             </div>
 
             {/* Action Submit */}
-            <div className="col-span-1 md:col-span-2 flex justify-end mt-4">
+            <div className="col-span-1 md:col-span-2 flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 pt-4 border-t border-[#26262B]">
+              <button
+                type="button"
+                onClick={handleQuickSaveFromStep1}
+                className="w-full sm:w-auto bg-[#0b4e6e] hover:brightness-110 text-[#8abfe4] border border-[#0b4e6e] px-5 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 text-xs sm:text-sm uppercase tracking-wider"
+              >
+                <span className="material-symbols-outlined text-[20px]">bookmark_add</span>
+                <span>Sinalizar Atleta Já (Guardar sem Avaliar)</span>
+              </button>
+
               <button
                 type="submit"
-                className="bg-[#E63946] text-white px-6 py-2.5 rounded font-bold hover:brightness-110 transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+                className="w-full sm:w-auto bg-[#ff535b] text-white px-6 py-2.5 rounded-xl font-bold hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-95 text-xs sm:text-sm uppercase tracking-wider"
               >
                 <span>Avançar para Avaliação Tática</span>
                 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
@@ -559,22 +618,33 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
             </div>
 
             {/* Buttons */}
-            <div className="flex justify-between items-center mt-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="px-5 py-2.5 bg-[#2a2a2b] text-[#e5e2e3] rounded text-sm font-bold hover:bg-[#353436]"
+                className="w-full sm:w-auto px-5 py-2.5 bg-[#2a2a2b] text-[#e5e2e3] rounded-xl text-xs font-bold hover:bg-[#353436] uppercase tracking-wider"
               >
                 Voltar
               </button>
 
-              <button
-                type="submit"
-                className="bg-[#E63946] text-white px-6 py-2.5 rounded font-bold hover:brightness-110 transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
-              >
-                <span>Submeter Avaliação</span>
-                <span className="material-symbols-outlined text-[20px]">check</span>
-              </button>
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={handleQuickSaveFromStep1}
+                  className="w-full sm:w-auto px-4 py-2.5 bg-[#0b4e6e]/40 hover:bg-[#0b4e6e] text-[#8abfe4] border border-[#0b4e6e] rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider"
+                >
+                  <span className="material-symbols-outlined text-[18px]">skip_next</span>
+                  <span>Saltar Avaliação e Guardar</span>
+                </button>
+
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto bg-[#ff535b] text-white px-6 py-2.5 rounded-xl font-bold hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-95 text-xs uppercase tracking-wider"
+                >
+                  <span>Submeter Avaliação</span>
+                  <span className="material-symbols-outlined text-[20px]">check</span>
+                </button>
+              </div>
             </div>
           </form>
         </div>
