@@ -474,6 +474,7 @@ export default function App() {
             matches={matchesList}
             onNavigate={setMainView}
             onPlayerClick={setSelectedPlayer}
+            onUpdatePlayer={handleUpdatePlayer}
             onTriggerToast={setToastMessage}
           />
         )}

@@ -487,6 +487,70 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto min-h-0 p-5 flex flex-col gap-6 pb-24 scrollbar-thin">
+          {/* Pipeline Stage Selector (Sinalizado / Em Análise / Analisado) */}
+          <div className="flex flex-col gap-2 h-auto min-h-fit bg-[#131314] p-3.5 rounded-xl border border-[#353436]">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold tracking-wider text-[#e4bebc] uppercase">Estado de Observação (Funil)</span>
+              <span className="text-[10px] text-[#e4bebc]/60 font-mono-data">Supabase Live</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 h-auto min-h-fit">
+              <button
+                type="button"
+                onClick={() => {
+                  if (player && onUpdatePlayer) {
+                    onUpdatePlayer({ ...player, pipelineStage: 'Sinalizado' });
+                    onTriggerToast(`Estado do atleta "${player.name}" alterado para "Sinalizado".`);
+                  }
+                }}
+                className={`px-2 py-2 rounded-lg text-xs font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 border cursor-pointer ${
+                  (player?.pipelineStage || (player?.status === 'hire' ? 'Em Análise' : 'Sinalizado')) === 'Sinalizado'
+                    ? 'bg-[#0b4e6e] text-[#8abfe4] border-[#8abfe4] shadow ring-1 ring-[#8abfe4]'
+                    : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#26262B]'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px] text-[#8abfe4]">bookmark</span>
+                <span>Sinalizado</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (player && onUpdatePlayer) {
+                    onUpdatePlayer({ ...player, pipelineStage: 'Em Análise' });
+                    onTriggerToast(`Estado do atleta "${player.name}" alterado para "Em Análise".`);
+                  }
+                }}
+                className={`px-2 py-2 rounded-lg text-xs font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 border cursor-pointer ${
+                  (player?.pipelineStage || (player?.status === 'hire' ? 'Em Análise' : 'Sinalizado')) === 'Em Análise'
+                    ? 'bg-[#ff535b]/20 text-[#ffb3b1] border-[#ff535b] shadow ring-1 ring-[#ff535b]'
+                    : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#26262B]'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px] text-[#ff535b]">search</span>
+                <span>Em Análise</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (player && onUpdatePlayer) {
+                    onUpdatePlayer({ ...player, pipelineStage: 'Analisado' });
+                    onTriggerToast(`Estado do atleta "${player.name}" alterado para "Analisado".`);
+                  }
+                }}
+                className={`px-2 py-2 rounded-lg text-xs font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 border cursor-pointer ${
+                  player?.pipelineStage === 'Analisado'
+                    ? 'bg-[#4CAF50]/20 text-[#81C784] border-[#4CAF50] shadow ring-1 ring-[#4CAF50]'
+                    : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#26262B]'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px] text-[#81C784]">check_circle</span>
+                <span>Analisado</span>
+              </button>
+            </div>
+          </div>
+
           {/* Status Selector Pills */}
           <div className="flex flex-col gap-2 h-auto min-h-fit">
             <span className="text-xs font-bold tracking-wider text-[#e4bebc] uppercase">Status de Acompanhamento</span>

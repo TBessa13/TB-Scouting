@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Player, MatchReport, MainView } from '../types';
 import { Avatar } from './Avatar';
 
@@ -8,6 +8,7 @@ interface OverviewViewProps {
   matches: MatchReport[];
   onNavigate: (view: MainView) => void;
   onPlayerClick: (player: Player) => void;
+  onUpdatePlayer?: (player: Player) => void;
   onTriggerToast: (msg: string) => void;
 }
 
@@ -17,16 +18,38 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
   matches = [],
   onNavigate,
   onPlayerClick,
+  onUpdatePlayer,
   onTriggerToast,
 }) => {
-  // Active Pipeline Funnel Players
+  const [draggedPlayerId, setDraggedPlayerId] = useState<string | null>(null);
+  const [dragOverColumn, setDragOverColumn] = useState<'Sinalizado' | 'Em Análise' | null>(null);
+
+  // Active Pipeline Funnel Players (EXCLUDES 'Analisado')
   const sinalizadosPlayers = globalPlayers.filter(
-    (p) => p.pipelineStage === 'Sinalizado' || (!p.pipelineStage && p.status === 'track')
+    (p) => p.pipelineStage !== 'Analisado' && (p.pipelineStage === 'Sinalizado' || (!p.pipelineStage && p.status === 'track'))
   );
 
   const emAnalisePlayers = globalPlayers.filter(
-    (p) => p.pipelineStage === 'Em Análise' || (!p.pipelineStage && p.status === 'hire')
+    (p) => p.pipelineStage !== 'Analisado' && (p.pipelineStage === 'Em Análise' || (!p.pipelineStage && p.status === 'hire'))
   );
+
+  const handleMovePlayerStage = (playerId: string, newStage: 'Sinalizado' | 'Em Análise') => {
+    const targetPlayer = globalPlayers.find((p) => p.id === playerId);
+    if (!targetPlayer) return;
+
+    const currentStage = targetPlayer.pipelineStage || (targetPlayer.status === 'hire' ? 'Em Análise' : 'Sinalizado');
+    if (currentStage === newStage) return;
+
+    const updatedPlayer: Player = {
+      ...targetPlayer,
+      pipelineStage: newStage,
+    };
+
+    if (onUpdatePlayer) {
+      onUpdatePlayer(updatedPlayer);
+    }
+    onTriggerToast(`Atleta "${targetPlayer.name}" movido para "${newStage}" (Atualizado no Supabase).`);
+  };
 
   const upcomingMatches = matches.slice(0, 3);
   const recentPlayers = globalPlayers.slice(0, 3);
@@ -200,7 +223,26 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* SECÇÃO 1: SINALIZADOS */}
-              <div className="bg-[#0A0A0B] border border-[#26262B] rounded-xl p-3 flex flex-col gap-3">
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'move';
+                  if (dragOverColumn !== 'Sinalizado') setDragOverColumn('Sinalizado');
+                }}
+                onDragLeave={() => setDragOverColumn(null)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const id = e.dataTransfer.getData('text/plain') || draggedPlayerId;
+                  if (id) handleMovePlayerStage(id, 'Sinalizado');
+                  setDraggedPlayerId(null);
+                  setDragOverColumn(null);
+                }}
+                className={`rounded-xl p-3 flex flex-col gap-3 transition-all duration-200 border ${
+                  dragOverColumn === 'Sinalizado'
+                    ? 'border-[#8abfe4] bg-[#0b4e6e]/20 ring-2 ring-[#8abfe4]/40 scale-[1.01]'
+                    : 'bg-[#0A0A0B] border-[#26262B]'
+                }`}
+              >
                 <div className="flex items-center justify-between border-b border-[#1C1C1F] pb-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#8abfe4]" />
@@ -213,17 +255,33 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
 
                 {sinalizadosPlayers.length === 0 ? (
                   <div className="p-4 text-center border border-dashed border-[#26262B] rounded-lg text-xs text-[#e4bebc]/70 my-auto">
-                    Nenhum jogador em fase de sinalização.
+                    Arraste um jogador para aqui para o sinalizar.
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2 max-h-[260px] overflow-y-auto scrollbar-thin pr-1">
                     {sinalizadosPlayers.map((player) => (
                       <div
                         key={player.id}
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.stopPropagation();
+                          e.dataTransfer.setData('text/plain', player.id);
+                          e.dataTransfer.effectAllowed = 'move';
+                          setDraggedPlayerId(player.id);
+                        }}
+                        onDragEnd={() => {
+                          setDraggedPlayerId(null);
+                          setDragOverColumn(null);
+                        }}
                         onClick={() => onPlayerClick(player)}
-                        className="bg-[#141416] hover:bg-[#1C1C1F] border border-[#26262B] hover:border-[#8abfe4]/60 rounded-lg p-2.5 flex items-center justify-between gap-2.5 transition-all cursor-pointer group"
+                        className={`bg-[#141416] hover:bg-[#1C1C1F] border border-[#26262B] hover:border-[#8abfe4]/60 rounded-lg p-2.5 flex items-center justify-between gap-2.5 transition-all cursor-grab active:cursor-grabbing group ${
+                          draggedPlayerId === player.id ? 'opacity-40 border-dashed border-[#8abfe4]' : ''
+                        }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="material-symbols-outlined text-[16px] text-[#e4bebc]/40 group-hover:text-[#8abfe4] transition-colors shrink-0">
+                            drag_indicator
+                          </span>
                           <Avatar
                             name={player.name}
                             className="w-8 h-8 text-[11px] border border-[#26262B] group-hover:border-[#8abfe4] shrink-0"
@@ -248,7 +306,26 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
               </div>
 
               {/* SECÇÃO 2: EM ANÁLISE */}
-              <div className="bg-[#0A0A0B] border border-[#26262B] rounded-xl p-3 flex flex-col gap-3">
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = 'move';
+                  if (dragOverColumn !== 'Em Análise') setDragOverColumn('Em Análise');
+                }}
+                onDragLeave={() => setDragOverColumn(null)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const id = e.dataTransfer.getData('text/plain') || draggedPlayerId;
+                  if (id) handleMovePlayerStage(id, 'Em Análise');
+                  setDraggedPlayerId(null);
+                  setDragOverColumn(null);
+                }}
+                className={`rounded-xl p-3 flex flex-col gap-3 transition-all duration-200 border ${
+                  dragOverColumn === 'Em Análise'
+                    ? 'border-[#ff535b] bg-[#ff535b]/20 ring-2 ring-[#ff535b]/40 scale-[1.01]'
+                    : 'bg-[#0A0A0B] border-[#26262B]'
+                }`}
+              >
                 <div className="flex items-center justify-between border-b border-[#1C1C1F] pb-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#ff535b]" />
@@ -261,17 +338,33 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
 
                 {emAnalisePlayers.length === 0 ? (
                   <div className="p-4 text-center border border-dashed border-[#26262B] rounded-lg text-xs text-[#e4bebc]/70 my-auto">
-                    Nenhum jogador em fase de análise.
+                    Arraste um jogador para aqui para o colocar em análise.
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2 max-h-[260px] overflow-y-auto scrollbar-thin pr-1">
                     {emAnalisePlayers.map((player) => (
                       <div
                         key={player.id}
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.stopPropagation();
+                          e.dataTransfer.setData('text/plain', player.id);
+                          e.dataTransfer.effectAllowed = 'move';
+                          setDraggedPlayerId(player.id);
+                        }}
+                        onDragEnd={() => {
+                          setDraggedPlayerId(null);
+                          setDragOverColumn(null);
+                        }}
                         onClick={() => onPlayerClick(player)}
-                        className="bg-[#141416] hover:bg-[#1C1C1F] border border-[#26262B] hover:border-[#ff535b]/60 rounded-lg p-2.5 flex items-center justify-between gap-2.5 transition-all cursor-pointer group"
+                        className={`bg-[#141416] hover:bg-[#1C1C1F] border border-[#26262B] hover:border-[#ff535b]/60 rounded-lg p-2.5 flex items-center justify-between gap-2.5 transition-all cursor-grab active:cursor-grabbing group ${
+                          draggedPlayerId === player.id ? 'opacity-40 border-dashed border-[#ff535b]' : ''
+                        }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="material-symbols-outlined text-[16px] text-[#e4bebc]/40 group-hover:text-[#ff535b] transition-colors shrink-0">
+                            drag_indicator
+                          </span>
                           <Avatar
                             name={player.name}
                             className="w-8 h-8 text-[11px] border border-[#26262B] group-hover:border-[#ff535b] shrink-0"
