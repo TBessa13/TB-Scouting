@@ -27,7 +27,7 @@ export function mapRowToPlayer(row: any): Player {
     dominantFoot: row.dominant_foot || 'Direito',
     position: row.position || 'MC',
     secondaryPositions: Array.isArray(row.secondary_positions) ? row.secondary_positions : [],
-    status: (row.status as PlayerStatus) || 'track',
+    status: (row.status as PlayerStatus) || 'pending',
     priorityRank: row.priority_rank || undefined,
     pipelineStage: row.pipeline_stage || undefined,
     rating: Number(row.rating) || 3,

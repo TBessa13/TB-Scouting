@@ -312,6 +312,7 @@ export default function App() {
     }
 
     const statusLabels: Record<PlayerStatus, string> = {
+      pending: 'Por definir',
       hire: 'Contratar (Alta Prioridade)',
       track: 'Continuar a Acompanhar',
       squad: 'Opção de Plantel',

@@ -23,7 +23,7 @@ export const convertCategoryInputToBase20 = (inputVal: number, _system?: RatingS
 
 export const getSystemMaxVal = (_system?: RatingSystem): number => 5;
 
-export type PlayerStatus = 'hire' | 'track' | 'squad' | 'discard';
+export type PlayerStatus = 'pending' | 'hire' | 'track' | 'squad' | 'discard';
 
 export type PositionCode = 
   | 'GR' | 'DC' | 'DD' | 'DE' | 'LDO' | 'LEO'

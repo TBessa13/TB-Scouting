@@ -551,13 +551,25 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
             </div>
           </div>
 
-          {/* Status Selector Pills */}
+          {/* Status Selector Pills (Recomendação) */}
           <div className="flex flex-col gap-2 h-auto min-h-fit">
-            <span className="text-xs font-bold tracking-wider text-[#e4bebc] uppercase">Status de Acompanhamento</span>
-            <div className="grid grid-cols-2 gap-2 h-auto min-h-fit">
+            <span className="text-xs font-bold tracking-wider text-[#e4bebc] uppercase">Recomendação</span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 h-auto min-h-fit">
+              <button
+                onClick={() => onUpdateStatus(player.id, 'pending')}
+                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] cursor-pointer ${
+                  player.status === 'pending' || !player.status
+                    ? 'bg-[#71717a] text-white border-[#71717a] shadow'
+                    : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#353436]'
+                }`}
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-[#a1a1aa] shrink-0" />
+                <span>Por definir</span>
+              </button>
+
               <button
                 onClick={() => onUpdateStatus(player.id, 'hire')}
-                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] ${
+                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] cursor-pointer ${
                   player.status === 'hire'
                     ? 'bg-[#ff535b] text-white border-[#ff535b] shadow'
                     : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#353436]'
@@ -569,7 +581,7 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
 
               <button
                 onClick={() => onUpdateStatus(player.id, 'track')}
-                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] ${
+                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] cursor-pointer ${
                   player.status === 'track'
                     ? 'bg-[#0b4e6e] text-[#8abfe4] border-[#0b4e6e] shadow'
                     : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#353436]'
@@ -581,7 +593,7 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
 
               <button
                 onClick={() => onUpdateStatus(player.id, 'squad')}
-                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] ${
+                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] cursor-pointer ${
                   player.status === 'squad'
                     ? 'bg-[#8a9389] text-[#242c24] border-[#8a9389] shadow'
                     : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#353436]'
@@ -593,7 +605,7 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
 
               <button
                 onClick={() => onUpdateStatus(player.id, 'discard')}
-                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] ${
+                className={`px-3 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 border h-auto min-h-[38px] cursor-pointer ${
                   player.status === 'discard'
                     ? 'bg-[#353436] text-white border-[#353436] shadow'
                     : 'bg-[#1c1b1c] text-[#e4bebc] border-[#353436] hover:bg-[#353436]'

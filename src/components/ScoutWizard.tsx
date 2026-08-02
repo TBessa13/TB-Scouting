@@ -44,8 +44,8 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
   const [hudlUrl, setHudlUrl] = useState('https://hudl.com');
   const [transfermarktUrl, setTransfermarktUrl] = useState('https://www.transfermarkt.pt');
 
-  // Step 3 Selected Priority
-  const [selectedStatus, setSelectedStatus] = useState<PlayerStatus>('hire');
+  // Step 3 Selected Priority / Recomendação
+  const [selectedStatus, setSelectedStatus] = useState<PlayerStatus>('pending');
 
   const handleNextStep1 = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +83,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
       agent: agent.trim() || 'Sem Agente Registado',
       dominantFoot,
       position,
-      status: 'track',
+      status: 'pending',
       rating: null,
       tacticalFitPercent: null,
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
@@ -675,6 +675,25 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1">
+              {/* Por definir */}
+              <button
+                type="button"
+                onClick={() => setSelectedStatus('pending')}
+                className={`flex flex-col items-start p-4 rounded-lg border text-left transition-all ${
+                  selectedStatus === 'pending'
+                    ? 'border-[#71717a] bg-[#1C1C1F] ring-1 ring-[#71717a]'
+                    : 'border-[#26262B] bg-[#0A0A0B] hover:border-[#71717a] hover:bg-[#1C1C1F]'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="w-3 h-3 rounded-full bg-[#71717a]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#e5e2e3]">
+                    Por definir
+                  </span>
+                </div>
+                <span className="text-xs text-[#e4bebc]">Sem recomendação atribuída de momento.</span>
+              </button>
+
               {/* Contratar */}
               <button
                 type="button"

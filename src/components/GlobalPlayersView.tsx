@@ -77,6 +77,7 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
 
   // Status Labels in Portuguese
   const statusLabels: Record<PlayerStatus, { label: string; badgeClass: string }> = {
+    pending: { label: 'Por definir', badgeClass: 'bg-[#71717a]/20 text-[#a1a1aa] border-[#71717a]/40' },
     hire: { label: 'Contratar', badgeClass: 'bg-[#ff535b]/20 text-[#ffb3b1] border-[#ff535b]/40' },
     track: { label: 'Acompanhar', badgeClass: 'bg-[#0b4e6e]/40 text-[#8abfe4] border-[#0b4e6e]' },
     squad: { label: 'Opção Plantel', badgeClass: 'bg-[#26262B] text-[#e4bebc] border-[#353436]' },
@@ -411,7 +412,8 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
               onChange={(e) => setStatusFilter(e.target.value as PlayerStatus | 'all')}
               className="w-full bg-[#0e0e0f] border border-[#353436] focus:border-[#ff535b] rounded-xl px-3 py-2.5 text-xs text-[#e5e2e3] font-bold outline-none cursor-pointer"
             >
-              <option value="all">Todos os Status</option>
+              <option value="all">Todas as Recomendações</option>
+              <option value="pending">Por definir</option>
               <option value="hire">Contratar (Alvo Prioritário)</option>
               <option value="track">Acompanhar (Em Observação)</option>
               <option value="squad">Opção Plantel (Interno)</option>

@@ -25,6 +25,13 @@ interface ColumnDef {
 
 const COLUMNS: ColumnDef[] = [
   {
+    status: 'pending',
+    title: 'Por definir',
+    dotColor: 'bg-[#71717a]',
+    topBarClass: 'status-bar-pending',
+    accentClass: 'text-[#a1a1aa]',
+  },
+  {
     status: 'hire',
     title: 'Contratar',
     dotColor: 'bg-[#ff535b]',

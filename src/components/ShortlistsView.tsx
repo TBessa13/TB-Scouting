@@ -472,7 +472,8 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
               onChange={(e) => setStatusFilter(e.target.value as PlayerStatus | 'all')}
               className="w-full bg-[#0e0e0f] border border-[#353436] focus:border-[#ff535b] rounded-xl px-3 py-2.5 text-xs text-[#e5e2e3] font-bold outline-none cursor-pointer"
             >
-              <option value="all">Todos os Status</option>
+              <option value="all">Todas as Recomendações</option>
+              <option value="pending">Por definir</option>
               <option value="hire">Contratar (Alvo Prioritário)</option>
               <option value="track">Acompanhar (Em Observação)</option>
               <option value="squad">Opção Plantel (Interno)</option>

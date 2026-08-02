@@ -298,12 +298,13 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Estado no Quadro</label>
+                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Recomendação</label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as PlayerStatus)}
                   className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
                 >
+                  <option value="pending">Por definir</option>
                   <option value="hire">Contratar (Prioridade Alta)</option>
                   <option value="track">Continuar a Acompanhar</option>
                   <option value="squad">Opção de Plantel / Plantel Principal</option>
