@@ -812,7 +812,10 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
                               className="px-2 py-0.5 rounded-md text-[10px] font-bold inline-flex items-center gap-1 transition-all cursor-pointer bg-[#0b4e6e] hover:bg-[#0f6087] text-[#8abfe4] border border-[#0b4e6e] shadow-sm w-auto max-w-max shrink-0 whitespace-nowrap"
                               title="Adicionar a Shadow Team"
                             >
-                              <span>+ Shadow Team</span>
+                              <span className="material-symbols-outlined text-[13px] shrink-0 leading-none">
+                                group_add
+                              </span>
+                              <span>Shadow Team</span>
                               <span className="material-symbols-outlined text-[12px] shrink-0 leading-none">
                                 expand_more
                               </span>
