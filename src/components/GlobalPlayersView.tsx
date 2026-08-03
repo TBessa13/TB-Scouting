@@ -802,21 +802,18 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
                           </a>
 
                           {/* Shadow Team Dropdown Button */}
-                          <div className="relative inline-block text-left" onClick={(e) => e.stopPropagation()}>
+                          <div className="relative inline-block text-left w-auto max-w-max shrink-0" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() =>
                                 setOpenTeamDropdownPlayerId((prev) =>
                                   prev === player.id ? null : player.id
                                 )
                               }
-                              className="px-2 py-1 rounded-lg text-[10.5px] font-bold flex items-center gap-1 transition-all cursor-pointer bg-[#0b4e6e] hover:bg-[#0f6087] text-[#8abfe4] border border-[#0b4e6e] shadow-sm shrink-0"
+                              className="px-2 py-0.5 rounded-md text-[10px] font-bold inline-flex items-center gap-1 transition-all cursor-pointer bg-[#0b4e6e] hover:bg-[#0f6087] text-[#8abfe4] border border-[#0b4e6e] shadow-sm w-auto max-w-max shrink-0 whitespace-nowrap"
                               title="Adicionar a Shadow Team"
                             >
-                              <span className="material-symbols-outlined text-[13px]">
-                                group_add
-                              </span>
                               <span>+ Shadow Team</span>
-                              <span className="material-symbols-outlined text-[13px]">
+                              <span className="material-symbols-outlined text-[12px] shrink-0 leading-none">
                                 expand_more
                               </span>
                             </button>
