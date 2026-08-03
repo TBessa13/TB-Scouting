@@ -19,8 +19,19 @@ interface ShortlistsViewProps {
 interface CustomTab {
   id: string;
   name: string;
+  positionFilter?: PositionCode;
   status?: PlayerStatus;
+  minAge?: number;
+  maxAge?: number;
 }
+
+const statusLabels: Record<PlayerStatus, { label: string; badgeClass: string }> = {
+  pending: { label: 'Por definir', badgeClass: 'bg-[#71717a]/20 text-[#a1a1aa] border-[#71717a]/40' },
+  hire: { label: 'Contratar', badgeClass: 'bg-[#ff535b]/20 text-[#ffb3b1] border-[#ff535b]/40' },
+  track: { label: 'Acompanhar', badgeClass: 'bg-[#0b4e6e]/40 text-[#8abfe4] border-[#0b4e6e]' },
+  squad: { label: 'Opção Plantel', badgeClass: 'bg-[#26262B] text-[#e4bebc] border-[#353436]' },
+  discard: { label: 'Descartar', badgeClass: 'bg-red-950/40 text-red-400 border-red-900/40' },
+};
 
 export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
   players,
@@ -722,6 +733,7 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
                 </th>
                 <th className="p-4 px-5">Jogador</th>
                 <th className="p-4">Posição</th>
+                <th className="p-4">Recomendação</th>
                 <th className="p-4">Idade</th>
                 <th className="p-4">Altura</th>
                 <th className="p-4 pl-3 pr-2">Pé</th>
@@ -796,6 +808,18 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
                               </span>
                             ))}
                         </div>
+                      </td>
+
+                      {/* Recomendação */}
+                      <td className="p-4 whitespace-nowrap">
+                        {(() => {
+                          const info = statusLabels[player.status] || statusLabels.pending;
+                          return (
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${info.badgeClass}`}>
+                              {info.label}
+                            </span>
+                          );
+                        })()}
                       </td>
 
                       {/* Idade */}

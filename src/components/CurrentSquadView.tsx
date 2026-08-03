@@ -1,10 +1,18 @@
 import React, { useState, useMemo } from 'react';
-import { Player, FormationName, RatingSystem, getDisplayRating, getPlayerAge } from '../types';
+import { Player, PlayerStatus, FormationName, RatingSystem, getDisplayRating, getPlayerAge } from '../types';
 import { AddSquadPlayerModal } from './AddSquadPlayerModal';
 import { TacticalPitch } from './TacticalPitch';
 import { StarRating } from './StarRating';
 import { Avatar } from './Avatar';
 import { FootIndicator } from './FootIndicator';
+
+const statusLabels: Record<PlayerStatus, { label: string; badgeClass: string }> = {
+  pending: { label: 'Por definir', badgeClass: 'bg-[#71717a]/20 text-[#a1a1aa] border-[#71717a]/40' },
+  hire: { label: 'Contratar', badgeClass: 'bg-[#ff535b]/20 text-[#ffb3b1] border-[#ff535b]/40' },
+  track: { label: 'Acompanhar', badgeClass: 'bg-[#0b4e6e]/40 text-[#8abfe4] border-[#0b4e6e]' },
+  squad: { label: 'Opção Plantel', badgeClass: 'bg-[#26262B] text-[#e4bebc] border-[#353436]' },
+  discard: { label: 'Descartar', badgeClass: 'bg-red-950/40 text-red-400 border-red-900/40' },
+};
 
 interface CurrentSquadViewProps {
   squadPlayers: Player[];
@@ -199,6 +207,7 @@ export const CurrentSquadView: React.FC<CurrentSquadViewProps> = ({
                 <tr>
                   <th className="py-4 px-6 font-bold">Jogador</th>
                   <th className="py-4 px-4 font-bold text-center">Posição</th>
+                  <th className="py-4 px-4 font-bold text-center">Recomendação</th>
                   <th className="py-4 px-4 font-bold text-center cursor-pointer hover:text-white" onClick={() => { setSortField('age'); setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc'); }}>
                     Idade {sortField === 'age' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
                   </th>
@@ -254,6 +263,18 @@ export const CurrentSquadView: React.FC<CurrentSquadViewProps> = ({
                         <span className="bg-[#0e0e0f] text-[#ffb3b1] border border-[#ff535b]/40 font-mono-data font-bold text-xs px-2.5 py-1 rounded">
                           {player.position}
                         </span>
+                      </td>
+
+                      {/* Recomendação */}
+                      <td className="py-4 px-4 text-center whitespace-nowrap">
+                        {(() => {
+                          const info = statusLabels[player.status] || statusLabels.pending;
+                          return (
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${info.badgeClass}`}>
+                              {info.label}
+                            </span>
+                          );
+                        })()}
                       </td>
 
                       {/* Age */}

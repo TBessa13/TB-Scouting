@@ -648,6 +648,7 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
                   <th className="p-4 w-10 text-center">Comp.</th>
                   <th className="p-4 px-5">Jogador</th>
                   <th className="p-4">Posição</th>
+                  <th className="p-4">Recomendação</th>
                   <th className="p-4">Idade</th>
                   <th className="p-4">Altura</th>
                   <th className="p-4 pl-3 pr-2">Pé</th>
@@ -724,6 +725,18 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
                         </div>
                       </td>
 
+                      {/* Recomendação */}
+                      <td className="p-4 whitespace-nowrap">
+                        {(() => {
+                          const info = statusLabels[player.status] || statusLabels.pending;
+                          return (
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${info.badgeClass}`}>
+                              {info.label}
+                            </span>
+                          );
+                        })()}
+                      </td>
+
                       {/* Idade */}
                       <td className="p-4 whitespace-nowrap text-xs text-[#e5e2e3] font-mono-data font-semibold">
                         {getPlayerAge(player)} anos
@@ -796,14 +809,14 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
                                   prev === player.id ? null : player.id
                                 )
                               }
-                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer bg-[#0b4e6e] hover:bg-[#0f6087] text-[#8abfe4] border border-[#ff535b]/30 shadow-sm"
+                              className="px-2 py-1 rounded-lg text-[10.5px] font-bold flex items-center gap-1 transition-all cursor-pointer bg-[#0b4e6e] hover:bg-[#0f6087] text-[#8abfe4] border border-[#0b4e6e] shadow-sm shrink-0"
                               title="Adicionar a Shadow Team"
                             >
-                              <span className="material-symbols-outlined text-[14px]">
+                              <span className="material-symbols-outlined text-[13px]">
                                 group_add
                               </span>
-                              <span>Shadow Team</span>
-                              <span className="material-symbols-outlined text-[14px]">
+                              <span>+ Shadow Team</span>
+                              <span className="material-symbols-outlined text-[13px]">
                                 expand_more
                               </span>
                             </button>
