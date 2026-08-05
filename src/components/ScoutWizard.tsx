@@ -29,8 +29,8 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
   const maxScaleVal = getSystemMaxVal(ratingSystem);
   const defaultCategoryRating = ratingSystem === '20' ? 16 : (ratingSystem === '100' ? 80 : (ratingSystem === '10' ? 8 : 4));
 
-  const [tacticalFitPercent, setTacticalFitPercent] = useState(85);
-  const [rating, setRating] = useState(() => (ratingSystem === '20' ? 16 : 4));
+  const [tacticalFitPercent, setTacticalFitPercent] = useState<number | null>(null);
+  const [rating, setRating] = useState<number | null>(null);
   const [tecnicaVal, setTecnicaVal] = useState(defaultCategoryRating);
   const [taticaVal, setTaticaVal] = useState(defaultCategoryRating);
   const [fisicaVal, setFisicaVal] = useState(defaultCategoryRating);
@@ -163,7 +163,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
           date: new Date().toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase(),
           title: 'Adicionado à Base de Dados Central via Wizard',
           scout: 'Director / Scout Senior',
-          rating: rating * 2
+          rating: rating ? rating * 2 : 0
         }
       ],
       wyscoutUrl,

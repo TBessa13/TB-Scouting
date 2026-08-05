@@ -30,8 +30,8 @@ export function mapRowToPlayer(row: any): Player {
     status: (row.status as PlayerStatus) || 'pending',
     priorityRank: row.priority_rank || undefined,
     pipelineStage: (row.pipeline_stage as any) || 'Sinalizado',
-    rating: Number(row.rating) || 3,
-    tacticalFitPercent: Number(row.tactical_fit_percent) || 75,
+    rating: row.rating !== null && row.rating !== undefined && row.rating !== '' ? Number(row.rating) : null,
+    tacticalFitPercent: row.tactical_fit_percent !== null && row.tactical_fit_percent !== undefined && row.tactical_fit_percent !== '' ? Number(row.tactical_fit_percent) : null,
     avatarUrl:
       row.avatar_url ||
       'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
@@ -66,8 +66,8 @@ export function mapPlayerToRow(player: Player, isSquad: boolean = false): any {
     status: player.status,
     priority_rank: player.priorityRank || null,
     pipeline_stage: player.pipelineStage || 'Sinalizado',
-    rating: player.rating,
-    tactical_fit_percent: player.tacticalFitPercent,
+    rating: player.rating ?? null,
+    tactical_fit_percent: player.tacticalFitPercent ?? null,
     avatar_url: player.avatarUrl,
     notes: player.notes || {},
     timeline: player.timeline || [],
