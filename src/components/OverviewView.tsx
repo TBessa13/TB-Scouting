@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Player, MatchReport, MainView } from '../types';
 import { Avatar } from './Avatar';
+import { updatePlayerPipelineStageInDb } from '../lib/supabase';
 
 interface OverviewViewProps {
   squadPlayers: Player[];
@@ -26,24 +27,27 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
 
   // Active Pipeline Funnel Players (EXCLUDES 'Analisado')
   const sinalizadosPlayers = globalPlayers.filter(
-    (p) => p.pipelineStage !== 'Analisado' && (p.pipelineStage === 'Sinalizado' || (!p.pipelineStage && p.status === 'track'))
+    (p) => (p.pipelineStage || 'Sinalizado') === 'Sinalizado'
   );
 
   const emAnalisePlayers = globalPlayers.filter(
-    (p) => p.pipelineStage !== 'Analisado' && (p.pipelineStage === 'Em Análise' || (!p.pipelineStage && p.status === 'hire'))
+    (p) => p.pipelineStage === 'Em Análise'
   );
 
-  const handleMovePlayerStage = (playerId: string, newStage: 'Sinalizado' | 'Em Análise') => {
+  const handleMovePlayerStage = async (playerId: string, newStage: 'Sinalizado' | 'Em Análise') => {
     const targetPlayer = globalPlayers.find((p) => p.id === playerId);
     if (!targetPlayer) return;
 
-    const currentStage = targetPlayer.pipelineStage || (targetPlayer.status === 'hire' ? 'Em Análise' : 'Sinalizado');
+    const currentStage = targetPlayer.pipelineStage || 'Sinalizado';
     if (currentStage === newStage) return;
 
     const updatedPlayer: Player = {
       ...targetPlayer,
       pipelineStage: newStage,
     };
+
+    // Direct database persistence
+    updatePlayerPipelineStageInDb(playerId, newStage);
 
     if (onUpdatePlayer) {
       onUpdatePlayer(updatedPlayer);

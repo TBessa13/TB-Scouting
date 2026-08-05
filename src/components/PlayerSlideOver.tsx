@@ -13,6 +13,7 @@ import {
   AttachmentFile,
   NoteEntry,
 } from '../types';
+import { updatePlayerPipelineStageInDb } from '../lib/supabase';
 
 export function getFormattedCurrentDate(): string {
   const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -498,13 +499,16 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  if (player && onUpdatePlayer) {
-                    onUpdatePlayer({ ...player, pipelineStage: 'Sinalizado' });
+                  if (player) {
+                    updatePlayerPipelineStageInDb(player.id, 'Sinalizado');
+                    if (onUpdatePlayer) {
+                      onUpdatePlayer({ ...player, pipelineStage: 'Sinalizado' });
+                    }
                     onTriggerToast(`Estado do atleta "${player.name}" alterado para "Sinalizado".`);
                   }
                 }}
                 className={`px-2 py-2 rounded-lg text-xs font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 border cursor-pointer ${
-                  (player?.pipelineStage || (player?.status === 'hire' ? 'Em Análise' : 'Sinalizado')) === 'Sinalizado'
+                  (player?.pipelineStage || 'Sinalizado') === 'Sinalizado'
                     ? 'bg-[#0b4e6e] text-[#8abfe4] border-[#8abfe4] shadow ring-1 ring-[#8abfe4]'
                     : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#26262B]'
                 }`}
@@ -516,13 +520,16 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  if (player && onUpdatePlayer) {
-                    onUpdatePlayer({ ...player, pipelineStage: 'Em Análise' });
+                  if (player) {
+                    updatePlayerPipelineStageInDb(player.id, 'Em Análise');
+                    if (onUpdatePlayer) {
+                      onUpdatePlayer({ ...player, pipelineStage: 'Em Análise' });
+                    }
                     onTriggerToast(`Estado do atleta "${player.name}" alterado para "Em Análise".`);
                   }
                 }}
                 className={`px-2 py-2 rounded-lg text-xs font-bold transition-all flex flex-col sm:flex-row items-center justify-center gap-1.5 border cursor-pointer ${
-                  (player?.pipelineStage || (player?.status === 'hire' ? 'Em Análise' : 'Sinalizado')) === 'Em Análise'
+                  player?.pipelineStage === 'Em Análise'
                     ? 'bg-[#ff535b]/20 text-[#ffb3b1] border-[#ff535b] shadow ring-1 ring-[#ff535b]'
                     : 'bg-[#1c1b1c] text-[#e5e2e3] border-[#353436] hover:bg-[#26262B]'
                 }`}
@@ -534,8 +541,11 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  if (player && onUpdatePlayer) {
-                    onUpdatePlayer({ ...player, pipelineStage: 'Analisado' });
+                  if (player) {
+                    updatePlayerPipelineStageInDb(player.id, 'Analisado');
+                    if (onUpdatePlayer) {
+                      onUpdatePlayer({ ...player, pipelineStage: 'Analisado' });
+                    }
                     onTriggerToast(`Estado do atleta "${player.name}" alterado para "Analisado".`);
                   }
                 }}

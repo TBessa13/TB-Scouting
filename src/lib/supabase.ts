@@ -29,7 +29,7 @@ export function mapRowToPlayer(row: any): Player {
     secondaryPositions: Array.isArray(row.secondary_positions) ? row.secondary_positions : [],
     status: (row.status as PlayerStatus) || 'pending',
     priorityRank: row.priority_rank || undefined,
-    pipelineStage: row.pipeline_stage || undefined,
+    pipelineStage: (row.pipeline_stage as any) || 'Sinalizado',
     rating: Number(row.rating) || 3,
     tacticalFitPercent: Number(row.tactical_fit_percent) || 75,
     avatarUrl:
@@ -65,7 +65,7 @@ export function mapPlayerToRow(player: Player, isSquad: boolean = false): any {
     secondary_positions: player.secondaryPositions || [],
     status: player.status,
     priority_rank: player.priorityRank || null,
-    pipeline_stage: player.pipelineStage || null,
+    pipeline_stage: player.pipelineStage || 'Sinalizado',
     rating: player.rating,
     tactical_fit_percent: player.tacticalFitPercent,
     avatar_url: player.avatarUrl,
@@ -122,6 +122,27 @@ export async function updatePlayerStatusInDb(playerId: string, newStatus: Player
     return true;
   } catch (err) {
     console.error('Exception updating player status:', err);
+    return false;
+  }
+}
+
+export async function updatePlayerPipelineStageInDb(
+  playerId: string,
+  newStage: 'Sinalizado' | 'Em Análise' | 'Analisado'
+): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('players')
+      .update({ pipeline_stage: newStage })
+      .eq('id', playerId);
+
+    if (error) {
+      console.error('Error updating player pipeline_stage in Supabase:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('Exception updating player pipeline_stage:', err);
     return false;
   }
 }
