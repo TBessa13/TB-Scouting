@@ -140,47 +140,6 @@ Não inventes dados que não existam na base de dados fornecida.`;
     }
   });
 
-  // API Route: AI Executive Report
-  app.post('/api/report', async (req, res) => {
-    try {
-      const { player } = req.body;
-      const ai = getAi();
-      if (!ai) {
-        return res.json({ status: 'NO_KEY' });
-      }
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.6-flash',
-        contents: `Cria um Relatório Executivo Analítico de Observação de Futebol para o jogador:
-Nome: ${player.name}
-Idade: ${player.age} anos | Posição: ${player.position}
-Clube Atual: ${player.club} | Pé Dominante: ${player.dominantFoot}
-Valor de Mercado: ${player.marketValueFormatted} | Fim de Contrato: ${player.contractEnd}
-Adequação Tática ao Modelo do Clube: ${player.tacticalFitPercent}%
-
-Notas do Scout:
-- Técnica: ${player.notes?.tecnica}
-- Tática: ${player.notes?.tatica}
-- Física: ${player.notes?.fisica}
-- Psicológica: ${player.notes?.psicologica}
-
-Instruções:
-Sintetiza as informações em 4 subsecções executivas:
-1. Perfil e Impacto Imediato no Plantel
-2. Análise Multidimensional (Técnica, Tática, Física, Atitude)
-3. Adequação Tática e Riscos de Adaptação
-4. Parecer Final e Ação Recomendada (Contratar/Acompanhar/Descartar)
-
-Mantém um tom rigoroso, profissional e de nível da Liga dos Campeões.`,
-      });
-
-      res.json({ reportText: response.text });
-    } catch (err: any) {
-      console.error('Report API Error:', err);
-      res.status(500).json({ error: err?.message || 'Erro ao gerar relatório com IA' });
-    }
-  });
-
   // Vite middleware in dev mode / Static serving in production
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
