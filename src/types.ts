@@ -117,6 +117,7 @@ export interface Player {
   wyscoutUrl?: string;
   hudlUrl?: string;
   transfermarktUrl?: string;
+  zerozeroUrl?: string;
   isContractExpiringSoon?: boolean;
   seasonStats?: SeasonStats;
   attachments?: AttachmentFile[];

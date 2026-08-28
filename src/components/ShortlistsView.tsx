@@ -886,6 +886,22 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
                             <span className="material-symbols-outlined text-[12px]">open_in_new</span>
                           </a>
 
+                          {/* zerozero */}
+                          <a
+                            href={
+                              player.zerozeroUrl ||
+                              `https://www.zerozero.pt/pesquisa?search_string=${encodeURIComponent(player.name)}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            title="Abrir no zerozero"
+                            className="px-2.5 py-1 rounded-lg bg-[#1C1C1F] hover:bg-[#26262B] text-[#e4bebc] hover:text-[#ff535b] border border-[#26262B] hover:border-[#ff535b]/60 transition-all font-mono-data text-[10px] font-bold flex items-center gap-1 cursor-pointer shrink-0"
+                          >
+                            <span>ZZ</span>
+                            <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                          </a>
+
                           {/* Remove */}
                           <button
                             onClick={() => handleRemoveFromList(player)}

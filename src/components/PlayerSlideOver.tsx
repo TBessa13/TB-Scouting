@@ -375,6 +375,16 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const handleOpenZerozero = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const url =
+      player.zerozeroUrl && player.zerozeroUrl.trim().length > 0
+        ? player.zerozeroUrl
+        : `https://www.zerozero.pt/pesquisa?search_string=${encodeURIComponent(player.name)}`;
+    onTriggerToast(`A abrir perfil no zerozero de ${player.name}...`);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   const handleSaveTmUrl = (e: React.FormEvent) => {
     e.preventDefault();
     const updatedUrl = tmInputUrl.trim();
@@ -447,6 +457,17 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
                   title={`Aceder ao perfil de ${player.name} no Transfermarkt`}
                 >
                   <span>TM</span>
+                  <span className="material-symbols-outlined text-[13px] text-[#e4bebc] group-hover:text-[#ff535b] transition-colors duration-200">
+                    open_in_new
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenZerozero}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono-data font-bold bg-[#141416] hover:bg-[#26262B] text-[#e4bebc] hover:text-[#ff535b] border border-[#353436] hover:border-[#ff535b]/60 transition-all duration-200 cursor-pointer shadow-sm group"
+                  title={`Aceder ao perfil de ${player.name} no zerozero`}
+                >
+                  <span>ZZ</span>
                   <span className="material-symbols-outlined text-[13px] text-[#e4bebc] group-hover:text-[#ff535b] transition-colors duration-200">
                     open_in_new
                   </span>
@@ -731,7 +752,7 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
               <span>Procurar Semelhantes</span>
             </button>
 
-            <div className="grid grid-cols-3 gap-2 mt-1 h-auto min-h-fit">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1 h-auto min-h-fit">
               <button
                 onClick={handleDownloadPdf}
                 className="bg-[#141416] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] py-2 px-2 rounded-lg flex items-center justify-center gap-1 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
@@ -757,6 +778,17 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
                   open_in_new
                 </span>
                 <span>Transfermarkt</span>
+              </button>
+
+              <button
+                onClick={handleOpenZerozero}
+                className="bg-[#141416] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] hover:text-[#ff535b] py-2 px-2 rounded-lg flex items-center justify-center gap-1 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
+                title={`Aceder ao perfil de ${player.name} no zerozero`}
+              >
+                <span className="material-symbols-outlined text-[16px]">
+                  open_in_new
+                </span>
+                <span>zerozero</span>
               </button>
             </div>
           </section>

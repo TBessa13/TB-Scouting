@@ -337,6 +337,17 @@ export const CurrentSquadView: React.FC<CurrentSquadViewProps> = ({
                             <span className="material-symbols-outlined text-[12px]">open_in_new</span>
                           </a>
 
+                          <a
+                            href={player.zerozeroUrl || `https://www.zerozero.pt/pesquisa?search_string=${encodeURIComponent(player.name)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-1.5 bg-[#1A2836] hover:bg-[#253A4E] text-[#8abfe4] hover:text-white rounded-lg text-[10px] font-bold border border-[#8abfe4]/30 transition-all cursor-pointer flex items-center gap-1"
+                            title="Abrir perfil no zerozero"
+                          >
+                            <span className="font-extrabold text-[10px]">ZZ</span>
+                            <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                          </a>
+
                           <button
                             onClick={() => setPlayerToRemove(player)}
                             className="p-1.5 bg-[#26262B] hover:bg-[#ff535b] text-[#e4bebc] hover:text-white rounded-lg transition-all cursor-pointer"

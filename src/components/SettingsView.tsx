@@ -69,6 +69,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       if (player.transfermarktUrl) {
         xmlLines.push(`      <TransfermarktUrl>${escapeXml(player.transfermarktUrl)}</TransfermarktUrl>`);
       }
+      if (player.zerozeroUrl) {
+        xmlLines.push(`      <ZerozeroUrl>${escapeXml(player.zerozeroUrl)}</ZerozeroUrl>`);
+      }
       if (player.wyscoutUrl) {
         xmlLines.push(`      <WyscoutUrl>${escapeXml(player.wyscoutUrl)}</WyscoutUrl>`);
       }
@@ -112,7 +115,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   };
 
   const handleExportCsv = () => {
-    const headers = ['ID', 'Nome', 'Posicao', 'Idade', 'Clube', 'Nacionalidade', 'Estado', 'NotaGeral', 'Potencial', 'FimContrato', 'TransfermarktUrl'];
+    const headers = ['ID', 'Nome', 'Posicao', 'Idade', 'Clube', 'Nacionalidade', 'Estado', 'NotaGeral', 'Potencial', 'FimContrato', 'TransfermarktUrl', 'ZerozeroUrl'];
     const rows = players.map(p => [
       p.id,
       `"${p.name.replace(/"/g, '""')}"`,
@@ -124,7 +127,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       p.overallScore,
       p.potentialScore,
       `"${p.contractEnd.replace(/"/g, '""')}"`,
-      `"${p.transfermarktUrl || ''}"`
+      `"${p.transfermarktUrl || ''}"`,
+      `"${p.zerozeroUrl || ''}"`
     ]);
 
     const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
