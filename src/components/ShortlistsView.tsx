@@ -286,14 +286,6 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
     }
   };
 
-  const handleOpenHudl = (player: Player) => {
-    if (player.hudlUrl) {
-      window.open(player.hudlUrl, '_blank');
-    } else {
-      onTriggerToast(`A abrir perfil no Hudl para ${player.name}...`);
-    }
-  };
-
   const handleOpenTransfermarkt = (player: Player) => {
     if (player.transfermarktUrl) {
       window.open(player.transfermarktUrl, '_blank', 'noopener,noreferrer');

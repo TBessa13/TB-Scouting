@@ -358,13 +358,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
     }
   };
 
-  const handleOpenHudl = () => {
-    onTriggerToast(`A carregar análise Hudl e dados telemétricos de ${player.name}...`);
-    if (player.hudlUrl) {
-      window.open(player.hudlUrl, '_blank');
-    }
-  };
-
   const handleOpenTransfermarkt = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     const url =

@@ -41,7 +41,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
   const [fisicaNote, setFisicaNote] = useState('Boa velocidade de arranque e resistência física.');
   const [psicologicaNote, setPsicologicaNote] = useState('Focado, atitude competitiva e boa comunicação.');
   const [wyscoutUrl, setWyscoutUrl] = useState('https://wyscout.com');
-  const [hudlUrl, setHudlUrl] = useState('https://hudl.com');
   const [transfermarktUrl, setTransfermarktUrl] = useState('https://www.transfermarkt.pt');
   const [zerozeroUrl, setZerozeroUrl] = useState('https://www.zerozero.pt');
 
@@ -105,7 +104,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
         }
       ],
       wyscoutUrl,
-      hudlUrl,
       transfermarktUrl: transfermarktUrl.trim() || undefined,
       zerozeroUrl: zerozeroUrl.trim() || undefined,
       isContractExpiringSoon: contractEnd.includes('2024') || contractEnd.includes('2025')
@@ -169,7 +167,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
         }
       ],
       wyscoutUrl,
-      hudlUrl,
       transfermarktUrl: transfermarktUrl.trim() || undefined,
       zerozeroUrl: zerozeroUrl.trim() || undefined,
       isContractExpiringSoon: contractEnd.includes('2024') || contractEnd.includes('2025')
@@ -591,7 +588,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
             </div>
 
             {/* Platform & External links */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-[#e4bebc] uppercase tracking-wider">Link Transfermarkt</label>
                 <input
@@ -618,15 +615,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
                   type="text"
                   value={wyscoutUrl}
                   onChange={(e) => setWyscoutUrl(e.target.value)}
-                  className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] px-3 py-2 text-sm font-mono-data focus:border-[#98cdf2] outline-none"
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#e4bebc] uppercase tracking-wider">Link Hudl Analysis</label>
-                <input
-                  type="text"
-                  value={hudlUrl}
-                  onChange={(e) => setHudlUrl(e.target.value)}
                   className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] px-3 py-2 text-sm font-mono-data focus:border-[#98cdf2] outline-none"
                 />
               </div>

@@ -57,7 +57,6 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
 
   // External Links
   const [wyscoutUrl, setWyscoutUrl] = useState(player.wyscoutUrl || '');
-  const [hudlUrl, setHudlUrl] = useState(player.hudlUrl || '');
   const [transfermarktUrl, setTransfermarktUrl] = useState(player.transfermarktUrl || '');
   const [zerozeroUrl, setZerozeroUrl] = useState(player.zerozeroUrl || '');
 
@@ -107,7 +106,6 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
         psicologica: psicologicaNote,
       },
       wyscoutUrl: wyscoutUrl.trim() || undefined,
-      hudlUrl: hudlUrl.trim() || undefined,
       transfermarktUrl: transfermarktUrl.trim() || undefined,
       zerozeroUrl: zerozeroUrl.trim() || undefined,
     };
@@ -474,7 +472,7 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
               LINKS DE ANÁLISE DE VÍDEO & PLATAFORMAS
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Transfermarkt URL</label>
                 <input
@@ -504,17 +502,6 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
                   value={wyscoutUrl}
                   onChange={(e) => setWyscoutUrl(e.target.value)}
                   placeholder="https://wyscout.com/..."
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b] font-mono-data"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Hudl URL</label>
-                <input
-                  type="url"
-                  value={hudlUrl}
-                  onChange={(e) => setHudlUrl(e.target.value)}
-                  placeholder="https://hudl.com/..."
                   className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b] font-mono-data"
                 />
               </div>

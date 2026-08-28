@@ -115,7 +115,6 @@ export interface Player {
   notes: ObservationNotes;
   timeline: TimelineEvent[];
   wyscoutUrl?: string;
-  hudlUrl?: string;
   transfermarktUrl?: string;
   zerozeroUrl?: string;
   isContractExpiringSoon?: boolean;

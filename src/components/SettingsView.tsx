@@ -75,9 +75,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       if (player.wyscoutUrl) {
         xmlLines.push(`      <WyscoutUrl>${escapeXml(player.wyscoutUrl)}</WyscoutUrl>`);
       }
-      if (player.hudlUrl) {
-        xmlLines.push(`      <HudlUrl>${escapeXml(player.hudlUrl)}</HudlUrl>`);
-      }
       xmlLines.push('      <Attributes>');
       xmlLines.push(`        <Technical>${player.technicalScore}</Technical>`);
       xmlLines.push(`        <Tactical>${player.tacticalScore}</Tactical>`);
@@ -226,11 +223,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 type="file"
                 accept=".xml"
                 className="hidden"
-                onChange={() => handleFileImport('XML NacSport/Hudl')}
+                onChange={() => handleFileImport('XML NacSport')}
               />
               <span className="inline-flex items-center gap-2 border border-[#ff535b]/60 hover:border-[#ff535b] text-[#ffb3b1] bg-transparent hover:bg-[#ff535b]/10 px-4 py-2 rounded text-xs font-bold uppercase tracking-wider transition-all">
                 <span className="material-symbols-outlined text-[16px]">upload_file</span>
-                <span>IMPORTAR XML (NacSport/Hudl)</span>
+                <span>IMPORTAR XML (NacSport)</span>
               </span>
             </label>
 
