@@ -3,6 +3,28 @@ import { Player, PlayerStatus, PositionCode, ShadowTeam, RatingSystem, PriorityR
 import { StarRating } from './StarRating';
 import { Avatar } from './Avatar';
 import { FootIndicator } from './FootIndicator';
+import { MultiSelectDropdown, MultiSelectOption } from './MultiSelectDropdown';
+
+const POSITION_OPTIONS: MultiSelectOption<PositionCode>[] = [
+  { value: 'GR', label: 'Guarda-Redes (GR)', shortLabel: 'GR', badge: 'GR' },
+  { value: 'DC', label: 'Defesa Central (DC)', shortLabel: 'DC', badge: 'DC' },
+  { value: 'DD', label: 'Defesa Direito (DD)', shortLabel: 'DD', badge: 'DD' },
+  { value: 'DE', label: 'Defesa Esquerdo (DE)', shortLabel: 'DE', badge: 'DE' },
+  { value: 'MDC', label: 'Médio Defensivo (MDC)', shortLabel: 'MDC', badge: 'MDC' },
+  { value: 'MC', label: 'Médio Centro (MC)', shortLabel: 'MC', badge: 'MC' },
+  { value: 'MO', label: 'Médio Ofensivo (MO)', shortLabel: 'MO', badge: 'MO' },
+  { value: 'EE', label: 'Extremo Esquerdo (EE)', shortLabel: 'EE', badge: 'EE' },
+  { value: 'ED', label: 'Extremo Direito (ED)', shortLabel: 'ED', badge: 'ED' },
+  { value: 'PL', label: 'Avançado Centro (PL)', shortLabel: 'PL', badge: 'PL' },
+];
+
+const STATUS_OPTIONS: MultiSelectOption<PlayerStatus>[] = [
+  { value: 'pending', label: 'Por definir', shortLabel: 'Por definir', dotColor: '#a1a1aa', badge: 'Pendente', badgeColor: 'bg-[#71717a]/20 text-[#a1a1aa]' },
+  { value: 'hire', label: 'Contratar (Alvo Prioritário)', shortLabel: 'Contratar', dotColor: '#ff535b', badge: 'Contratar', badgeColor: 'bg-[#ff535b]/20 text-[#ffb3b1]' },
+  { value: 'track', label: 'Acompanhar (Em Observação)', shortLabel: 'Acompanhar', dotColor: '#457B9D', badge: 'Acompanhar', badgeColor: 'bg-[#0b4e6e]/40 text-[#8abfe4]' },
+  { value: 'squad', label: 'Opção Plantel (Interno)', shortLabel: 'Opção Plantel', dotColor: '#8A9389', badge: 'Plantel', badgeColor: 'bg-[#26262B] text-[#e4bebc]' },
+  { value: 'discard', label: 'Descartar', shortLabel: 'Descartar', dotColor: '#555358', badge: 'Descartar', badgeColor: 'bg-red-950/40 text-red-400' },
+];
 
 interface GlobalPlayersViewProps {
   allPlayers: Player[];
@@ -61,8 +83,8 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
 
   // Filter States
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<PlayerStatus | 'all'>('all');
-  const [positionFilter, setPositionFilter] = useState<PositionCode | 'all'>('all');
+  const [selectedStatuses, setSelectedStatuses] = useState<PlayerStatus[]>([]);
+  const [selectedPositions, setSelectedPositions] = useState<PositionCode[]>([]);
   const [footFilter, setFootFilter] = useState<'Direito' | 'Esquerdo' | 'Ambidestro' | 'all'>('all');
   const [nationalityFilter, setNationalityFilter] = useState('');
   const [minAge, setMinAge] = useState<number>(16);
@@ -87,8 +109,8 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
   // Reset all filters
   const handleResetFilters = () => {
     setSearchTerm('');
-    setStatusFilter('all');
-    setPositionFilter('all');
+    setSelectedStatuses([]);
+    setSelectedPositions([]);
     setFootFilter('all');
     setNationalityFilter('');
     setMinAge(16);
@@ -115,13 +137,13 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
         }
       }
 
-      // Status
-      if (statusFilter !== 'all' && player.status !== statusFilter) {
+      // Status (Multi-select OR logic: matches any selected status; if empty, matches all)
+      if (selectedStatuses.length > 0 && !selectedStatuses.includes(player.status)) {
         return false;
       }
 
-      // Position
-      if (positionFilter !== 'all' && player.position !== positionFilter) {
+      // Position (Multi-select OR logic: matches any selected position; if empty, matches all)
+      if (selectedPositions.length > 0 && !selectedPositions.includes(player.position)) {
         return false;
       }
 
@@ -178,8 +200,8 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
   }, [
     allPlayers,
     searchTerm,
-    statusFilter,
-    positionFilter,
+    selectedStatuses,
+    selectedPositions,
     footFilter,
     nationalityFilter,
     minAge,
@@ -195,8 +217,8 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (searchTerm) count++;
-    if (statusFilter !== 'all') count++;
-    if (positionFilter !== 'all') count++;
+    if (selectedStatuses.length > 0) count++;
+    if (selectedPositions.length > 0) count++;
     if (footFilter !== 'all') count++;
     if (nationalityFilter) count++;
     if (minAge > 16 || maxAge < 40) count++;
@@ -206,8 +228,8 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
     return count;
   }, [
     searchTerm,
-    statusFilter,
-    positionFilter,
+    selectedStatuses,
+    selectedPositions,
     footFilter,
     nationalityFilter,
     minAge,
@@ -384,41 +406,28 @@ export const GlobalPlayersView: React.FC<GlobalPlayersViewProps> = ({
             )}
           </div>
 
-          {/* Quick Position Filter */}
+          {/* Quick Position Multi-Select Filter */}
           <div className="md:col-span-3">
-            <select
-              value={positionFilter}
-              onChange={(e) => setPositionFilter(e.target.value as PositionCode | 'all')}
-              className="w-full bg-[#0e0e0f] border border-[#353436] focus:border-[#ff535b] rounded-xl px-3 py-2.5 text-xs text-[#e5e2e3] font-bold outline-none cursor-pointer"
-            >
-              <option value="all">Todas as Posições</option>
-              <option value="GR">Guarda-Redes (GR)</option>
-              <option value="DC">Defesa Central (DC)</option>
-              <option value="DD">Defesa Direito (DD)</option>
-              <option value="DE">Defesa Esquerdo (DE)</option>
-              <option value="MDC">Médio Defensivo (MDC)</option>
-              <option value="MC">Médio Centro (MC)</option>
-              <option value="MO">Médio Ofensivo (MO)</option>
-              <option value="EE">Extremo Esquerdo (EE)</option>
-              <option value="ED">Extremo Direito (ED)</option>
-              <option value="PL">Avançado Centro (PL)</option>
-            </select>
+            <MultiSelectDropdown<PositionCode>
+              label="Posições"
+              placeholder="Todas as Posições"
+              options={POSITION_OPTIONS}
+              selectedValues={selectedPositions}
+              onChange={setSelectedPositions}
+              icon="sports_soccer"
+            />
           </div>
 
-          {/* Quick Status / Recommendation Filter */}
+          {/* Quick Status / Recommendation Multi-Select Filter */}
           <div className="md:col-span-2">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as PlayerStatus | 'all')}
-              className="w-full bg-[#0e0e0f] border border-[#353436] focus:border-[#ff535b] rounded-xl px-3 py-2.5 text-xs text-[#e5e2e3] font-bold outline-none cursor-pointer"
-            >
-              <option value="all">Todas as Recomendações</option>
-              <option value="pending">Por definir</option>
-              <option value="hire">Contratar (Alvo Prioritário)</option>
-              <option value="track">Acompanhar (Em Observação)</option>
-              <option value="squad">Opção Plantel (Interno)</option>
-              <option value="discard">Descartar</option>
-            </select>
+            <MultiSelectDropdown<PlayerStatus>
+              label="Recomendações"
+              placeholder="Todas as Recomendações"
+              options={STATUS_OPTIONS}
+              selectedValues={selectedStatuses}
+              onChange={setSelectedStatuses}
+              icon="recommend"
+            />
           </div>
 
           {/* Toggle Advanced Filters Button & Reset */}
