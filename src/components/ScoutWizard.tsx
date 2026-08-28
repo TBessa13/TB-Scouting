@@ -39,6 +39,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
 
   const [reportPdfUrl, setReportPdfUrl] = useState<string | undefined>(undefined);
   const [reportPdfName, setReportPdfName] = useState<string | undefined>(undefined);
+  const [generalNotes, setGeneralNotes] = useState('');
   
   const [wyscoutUrl, setWyscoutUrl] = useState('https://wyscout.com');
   const [transfermarktUrl, setTransfermarktUrl] = useState('https://www.transfermarkt.pt');
@@ -90,6 +91,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       reportPdfUrl,
       reportPdfName,
+      generalNotes: generalNotes.trim() || undefined,
       timeline: [
         {
           id: `t_${Date.now()}`,
@@ -145,6 +147,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
       reportPdfUrl,
       reportPdfName,
+      generalNotes: generalNotes.trim() || undefined,
       timeline: [
         {
           id: `t_${Date.now()}`,
@@ -425,6 +428,21 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
                 setReportPdfName(name);
               }}
             />
+
+            {/* Apontamentos Gerais */}
+            <div className="flex flex-col gap-2 bg-[#131314] p-4 rounded-xl border border-[#26262B]">
+              <div className="flex items-center gap-2 border-b border-[#26262B] pb-2">
+                <span className="material-symbols-outlined text-[#ff535b] text-[18px]">edit_note</span>
+                <label className="text-xs font-bold text-[#ffb3b1] uppercase tracking-wider">Apontamentos Gerais</label>
+              </div>
+              <textarea
+                rows={3}
+                value={generalNotes}
+                onChange={(e) => setGeneralNotes(e.target.value)}
+                placeholder="Escreva aqui apontamentos livres, impressões ou observações gerais sobre o atleta..."
+                className="w-full bg-[#0A0A0B] border border-[#353436] focus:border-[#ff535b] text-[#e5e2e3] text-xs p-3 rounded-xl outline-none transition-colors leading-relaxed resize-y placeholder:text-[#e4bebc]/40"
+              />
+            </div>
 
             {/* Platform & External links */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

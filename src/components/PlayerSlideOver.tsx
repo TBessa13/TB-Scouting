@@ -168,6 +168,28 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTmModalOpen, setIsTmModalOpen] = useState(false);
   const [tmInputUrl, setTmInputUrl] = useState('');
+  const [generalNotesText, setGeneralNotesText] = useState('');
+  const [isNotesDirty, setIsNotesDirty] = useState(false);
+
+  useEffect(() => {
+    if (player) {
+      setGeneralNotesText(player.generalNotes || '');
+      setIsNotesDirty(false);
+    }
+  }, [player]);
+
+  const handleSaveGeneralNotes = () => {
+    if (!player) return;
+    const updatedPlayer: Player = {
+      ...player,
+      generalNotes: generalNotesText.trim(),
+    };
+    if (onUpdatePlayer) {
+      onUpdatePlayer(updatedPlayer);
+    }
+    setIsNotesDirty(false);
+    onTriggerToast(`Apontamentos gerais de ${player.name} gravados com sucesso!`);
+  };
 
   const allPlayersList = useMemo(() => {
     if (allPlayers && allPlayers.length > 0) return allPlayers;
@@ -664,25 +686,49 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
             title="Relatório de Observação"
           />
 
-          {/* Observation History Timeline */}
-          <section className="mt-2">
-            <h3 className="text-sm font-bold text-[#e4bebc] uppercase tracking-wider mb-3 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">history</span>
-              Histórico de Observação
-            </h3>
-            <div className="relative pl-4 ml-2 border-l border-[#353436] flex flex-col gap-4">
-              {player.timeline.map((event) => (
-                <div key={event.id} className="relative">
-                  <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-[#ff535b] ring-4 ring-[#201f20]" />
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[11px] font-bold font-mono-data text-[#e4bebc]">{event.date}</span>
-                    <span className="text-sm font-medium text-[#e5e2e3]">{event.title}</span>
-                    <span className="text-xs text-[#e4bebc] font-mono-data">
-                      Scout: {event.scout} {event.rating && `(Nota: ${event.rating})`}
-                    </span>
-                  </div>
+          {/* Apontamentos Gerais (Campo de Texto Livre Global) */}
+          <section className="flex flex-col gap-3.5 bg-[#141416] border border-[#26262B] rounded-2xl p-5 shadow-xl">
+            <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#ff535b]/20 border border-[#ff535b] flex items-center justify-center text-[#ff535b]">
+                  <span className="material-symbols-outlined text-[20px]">edit_note</span>
                 </div>
-              ))}
+                <div className="flex flex-col">
+                  <h3 className="font-extrabold text-sm text-[#e5e2e3] uppercase tracking-wider">
+                    Apontamentos Gerais
+                  </h3>
+                  <span className="text-[10px] text-[#e4bebc]/70">Notas livres e apontamentos globais sobre o atleta</span>
+                </div>
+              </div>
+              {isNotesDirty && (
+                <span className="text-[10px] font-bold text-[#ffb3b1] bg-[#ff535b]/15 border border-[#ff535b]/30 px-2 py-0.5 rounded">
+                  Não gravado
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2.5">
+              <textarea
+                rows={4}
+                value={generalNotesText}
+                onChange={(e) => {
+                  setGeneralNotesText(e.target.value);
+                  setIsNotesDirty(true);
+                }}
+                placeholder="Escreva aqui os apontamentos gerais, notas de reuniões, contexto contratual ou impressões livres..."
+                className="w-full bg-[#0A0A0B] border border-[#353436] focus:border-[#ff535b] text-[#e5e2e3] text-xs p-3.5 rounded-xl outline-none transition-colors leading-relaxed resize-y min-h-[90px] placeholder:text-[#e4bebc]/40"
+              />
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSaveGeneralNotes}
+                  className="bg-[#ff535b] hover:brightness-110 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md active:scale-95"
+                >
+                  <span className="material-symbols-outlined text-[16px]">save</span>
+                  <span>Gravar Apontamentos</span>
+                </button>
+              </div>
             </div>
           </section>
 

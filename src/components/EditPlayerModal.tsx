@@ -53,6 +53,7 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
   // Relatório de Observação (PDF)
   const [reportPdfUrl, setReportPdfUrl] = useState<string | undefined>(player.reportPdfUrl);
   const [reportPdfName, setReportPdfName] = useState<string | undefined>(player.reportPdfName);
+  const [generalNotes, setGeneralNotes] = useState(player.generalNotes || '');
 
   // External Links
   const [wyscoutUrl, setWyscoutUrl] = useState(player.wyscoutUrl || '');
@@ -99,6 +100,7 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
       tacticalFitPercent: isTacticalUnevaluated ? null : (tacticalFitPercent ?? 75),
       reportPdfUrl,
       reportPdfName,
+      generalNotes: generalNotes.trim() || undefined,
       wyscoutUrl: wyscoutUrl.trim() || undefined,
       transfermarktUrl: transfermarktUrl.trim() || undefined,
       zerozeroUrl: zerozeroUrl.trim() || undefined,
@@ -416,6 +418,21 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
               setReportPdfName(name);
             }}
           />
+
+          {/* Section 3.5: Apontamentos Gerais */}
+          <div className="flex flex-col gap-2 bg-[#131314] p-4 rounded-xl border border-[#26262B]">
+            <div className="flex items-center gap-2 border-b border-[#26262B] pb-2">
+              <span className="material-symbols-outlined text-[#ff535b] text-[18px]">edit_note</span>
+              <label className="text-xs font-bold text-[#ffb3b1] uppercase tracking-wider">Apontamentos Gerais</label>
+            </div>
+            <textarea
+              rows={3}
+              value={generalNotes}
+              onChange={(e) => setGeneralNotes(e.target.value)}
+              placeholder="Escreva aqui apontamentos livres, notas de reuniões, contexto contratual ou observações gerais..."
+              className="w-full bg-[#0A0A0B] border border-[#353436] focus:border-[#ff535b] text-[#e5e2e3] text-xs p-3 rounded-xl outline-none transition-colors leading-relaxed resize-y placeholder:text-[#e4bebc]/40"
+            />
+          </div>
 
           {/* Section 4: Links Externos */}
           <div className="flex flex-col gap-3">

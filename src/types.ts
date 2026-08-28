@@ -114,6 +114,7 @@ export interface Player {
   avatarUrl: string;
   reportPdfUrl?: string; // Link direto cloud ou arquivo PDF anexado
   reportPdfName?: string; // Nome do ficheiro PDF
+  generalNotes?: string; // Apontamentos Gerais livres do jogador
   notes?: ObservationNotes;
   timeline: TimelineEvent[];
   wyscoutUrl?: string;
