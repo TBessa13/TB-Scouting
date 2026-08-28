@@ -186,6 +186,24 @@ export async function updatePlayerInDb(player: Player): Promise<boolean> {
   }
 }
 
+export async function updatePlayerGeneralNotesInDb(playerId: string, generalNotes: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('players')
+      .update({ general_notes: generalNotes })
+      .eq('id', playerId);
+
+    if (error) {
+      console.error('Error updating player general_notes in Supabase:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('Exception updating player general_notes:', err);
+    return false;
+  }
+}
+
 export async function fetchShadowTeamsFromDb(): Promise<ShadowTeam[]> {
   try {
     const { data: teamsData, error: teamsError } = await supabase.from('shadow_teams').select('*');

@@ -13,7 +13,7 @@ import {
   AttachmentFile,
   NoteEntry,
 } from '../types';
-import { updatePlayerPipelineStageInDb } from '../lib/supabase';
+import { updatePlayerPipelineStageInDb, updatePlayerGeneralNotesInDb } from '../lib/supabase';
 
 export function getFormattedCurrentDate(): string {
   const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -169,26 +169,31 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
   const [isTmModalOpen, setIsTmModalOpen] = useState(false);
   const [tmInputUrl, setTmInputUrl] = useState('');
   const [generalNotesText, setGeneralNotesText] = useState('');
-  const [isNotesDirty, setIsNotesDirty] = useState(false);
+  const [isSavingNotes, setIsSavingNotes] = useState(false);
 
   useEffect(() => {
     if (player) {
       setGeneralNotesText(player.generalNotes || '');
-      setIsNotesDirty(false);
     }
   }, [player]);
 
-  const handleSaveGeneralNotes = () => {
+  const handleSaveGeneralNotes = async () => {
     if (!player) return;
+    setIsSavingNotes(true);
+    const cleanedNotes = generalNotesText.trim();
     const updatedPlayer: Player = {
       ...player,
-      generalNotes: generalNotesText.trim(),
+      generalNotes: cleanedNotes,
     };
+
+    // Direct update to Supabase players table column general_notes
+    await updatePlayerGeneralNotesInDb(player.id, cleanedNotes);
+
     if (onUpdatePlayer) {
       onUpdatePlayer(updatedPlayer);
     }
-    setIsNotesDirty(false);
-    onTriggerToast(`Apontamentos gerais de ${player.name} gravados com sucesso!`);
+    setIsSavingNotes(false);
+    onTriggerToast(`Apontamentos gerais de ${player.name} guardados com sucesso!`);
   };
 
   const allPlayersList = useMemo(() => {
@@ -687,7 +692,7 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
           />
 
           {/* Apontamentos Gerais (Campo de Texto Livre Global) */}
-          <section className="flex flex-col gap-3.5 bg-[#141416] border border-[#26262B] rounded-2xl p-5 shadow-xl">
+          <section className="flex flex-col gap-3 bg-[#141416] border border-[#26262B] rounded-2xl p-5 shadow-xl">
             <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-[#ff535b]/20 border border-[#ff535b] flex items-center justify-center text-[#ff535b]">
@@ -697,36 +702,29 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
                   <h3 className="font-extrabold text-sm text-[#e5e2e3] uppercase tracking-wider">
                     Apontamentos Gerais
                   </h3>
-                  <span className="text-[10px] text-[#e4bebc]/70">Notas livres e apontamentos globais sobre o atleta</span>
+                  <span className="text-[10px] text-[#e4bebc]/70">Campo livre para notas e contexto geral do atleta</span>
                 </div>
               </div>
-              {isNotesDirty && (
-                <span className="text-[10px] font-bold text-[#ffb3b1] bg-[#ff535b]/15 border border-[#ff535b]/30 px-2 py-0.5 rounded">
-                  Não gravado
-                </span>
-              )}
             </div>
 
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-3">
               <textarea
-                rows={4}
+                rows={5}
                 value={generalNotesText}
-                onChange={(e) => {
-                  setGeneralNotesText(e.target.value);
-                  setIsNotesDirty(true);
-                }}
-                placeholder="Escreva aqui os apontamentos gerais, notas de reuniões, contexto contratual ou impressões livres..."
-                className="w-full bg-[#0A0A0B] border border-[#353436] focus:border-[#ff535b] text-[#e5e2e3] text-xs p-3.5 rounded-xl outline-none transition-colors leading-relaxed resize-y min-h-[90px] placeholder:text-[#e4bebc]/40"
+                onChange={(e) => setGeneralNotesText(e.target.value)}
+                placeholder="Escreva aqui os apontamentos gerais sobre o atleta..."
+                className="w-full bg-[#0A0A0B] border border-[#353436] focus:border-[#ff535b] text-[#e5e2e3] text-xs p-3.5 rounded-xl outline-none transition-colors leading-relaxed resize-y min-h-[110px] placeholder:text-[#e4bebc]/40 font-normal"
               />
 
               <div className="flex justify-end">
                 <button
                   type="button"
+                  disabled={isSavingNotes}
                   onClick={handleSaveGeneralNotes}
-                  className="bg-[#ff535b] hover:brightness-110 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md active:scale-95"
+                  className="bg-[#ff535b] hover:brightness-110 disabled:opacity-50 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95"
                 >
                   <span className="material-symbols-outlined text-[16px]">save</span>
-                  <span>Gravar Apontamentos</span>
+                  <span>{isSavingNotes ? 'A guardar...' : 'Guardar'}</span>
                 </button>
               </div>
             </div>
