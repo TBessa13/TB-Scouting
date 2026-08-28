@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar } from './Avatar';
 import { FootIndicator } from './FootIndicator';
 import {
@@ -11,7 +11,6 @@ import {
   getSystemMaxVal,
   getPlayerAge,
   AttachmentFile,
-  NoteEntry,
 } from '../types';
 import { updatePlayerPipelineStageInDb, updatePlayerGeneralNotesInDb } from '../lib/supabase';
 
@@ -78,7 +77,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
        player.club === 'Plantel Principal' ||
        player.club === 'Plantel Atual')
     : false;
-  const [activeAccordion, setActiveAccordion] = useState<string | null>('tecnica');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTmModalOpen, setIsTmModalOpen] = useState(false);
   const [tmInputUrl, setTmInputUrl] = useState('');
@@ -123,10 +121,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
   }, [player, onClose]);
 
   if (!player) return null;
-
-  const toggleAccordion = (key: string) => {
-    setActiveAccordion(prev => (prev === key ? null : key));
-  };
 
   const handleDownloadPdf = () => {
     if (player.reportPdfUrl) {
