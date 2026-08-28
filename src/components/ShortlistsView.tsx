@@ -1081,13 +1081,24 @@ export const ShortlistsView: React.FC<ShortlistsViewProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-1 text-xs bg-[#141416] p-3 rounded-lg border border-[#26262B]">
-                      <span className="text-[10px] uppercase font-bold text-[#ffb3b1]">
-                        Notas de Observação
-                      </span>
-                      <p className="text-[#e4bebc] italic text-[11px] leading-relaxed">
-                        "{p.notes.tatica}"
-                      </p>
+                    <div className="flex items-center justify-between bg-[#141416] p-3 rounded-lg border border-[#26262B]">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[18px] text-[#ff535b]">picture_as_pdf</span>
+                        <span className="text-[11px] font-bold text-[#e5e2e3]">Relatório de Observação</span>
+                      </div>
+                      {p.reportPdfUrl ? (
+                        <a
+                          href={p.reportPdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-[#ff535b] hover:brightness-110 text-white font-bold text-[11px] px-2.5 py-1 rounded flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined text-[13px]">open_in_new</span>
+                          <span>PDF</span>
+                        </a>
+                      ) : (
+                        <span className="text-[10px] text-[#e4bebc]/60">Sem PDF</span>
+                      )}
                     </div>
 
                     <button

@@ -112,7 +112,9 @@ export interface Player {
   rating?: number | null; // 1 to 5 (or null if unevaluated)
   tacticalFitPercent?: number | null; // 0 to 100 (or null if unevaluated)
   avatarUrl: string;
-  notes: ObservationNotes;
+  reportPdfUrl?: string; // Link direto cloud ou arquivo PDF anexado
+  reportPdfName?: string; // Nome do ficheiro PDF
+  notes?: ObservationNotes;
   timeline: TimelineEvent[];
   wyscoutUrl?: string;
   transfermarktUrl?: string;
@@ -215,6 +217,8 @@ export interface MatchReport {
   targetPlayerIds: string[];
   assignedScout: string;
   venue: string;
+  reportPdfUrl?: string;
+  reportPdfName?: string;
   attachments?: AttachmentFile[];
   notes?: string;
   timelineNotes?: MatchNoteEntry[];

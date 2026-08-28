@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MatchReport, Player, AttachmentFile } from '../types';
 import { AttachmentsSection } from './AttachmentsSection';
 import { Avatar } from './Avatar';
+import { ReportPdfSection } from './ReportPdfSection';
 
 interface MatchesViewProps {
   matches: MatchReport[];
@@ -405,6 +406,20 @@ export const MatchesView: React.FC<MatchesViewProps> = ({
                   ))}
               </div>
             </div>
+
+            {/* RELATÓRIO DE OBSERVAÇÃO (PDF) */}
+            <ReportPdfSection
+              pdfUrl={currentModalMatch.reportPdfUrl}
+              pdfName={currentModalMatch.reportPdfName}
+              onChange={(url, name) => {
+                setMatchesList((prev) =>
+                  prev.map((m) =>
+                    m.id === currentModalMatch.id ? { ...m, reportPdfUrl: url, reportPdfName: name } : m
+                  )
+                );
+              }}
+              title="Relatório de Observação do Jogo (PDF)"
+            />
 
             {/* RELATÓRIOS & ANEXOS DEDICATED SECTION */}
             <AttachmentsSection

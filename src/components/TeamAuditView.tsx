@@ -3,6 +3,7 @@ import { Player, PositionCode, AttachmentFile, PositionalRequirement, FormationN
 import { AttachmentsSection } from './AttachmentsSection';
 import { PositionalRequirementsForm } from './PositionalRequirementsForm';
 import { StarRating } from './StarRating';
+import { ReportPdfSection } from './ReportPdfSection';
 
 export interface PositionAuditItem {
   positionCode: PositionCode;
@@ -22,6 +23,8 @@ export interface TeamAuditMatch {
   score?: string;
   status: 'agendado' | 'concluido';
   venue: string;
+  reportPdfUrl?: string;
+  reportPdfName?: string;
   tacticalGapsNote: string;
   recruitmentProfileNote: string;
   priorityPositions: PositionCode[];
@@ -423,6 +426,12 @@ export const TeamAuditView: React.FC<TeamAuditViewProps> = ({
     );
   };
 
+  const handleUpdateMatchReportPdf = (reportPdfUrl?: string, reportPdfName?: string) => {
+    setAuditMatches((prev) =>
+      prev.map((m) => (m.id === activeMatch.id ? { ...m, reportPdfUrl, reportPdfName } : m))
+    );
+  };
+
   const handleUpdatePositionStatus = (
     positionCode: PositionCode,
     newStatus: PositionAuditItem['status']
@@ -719,70 +728,13 @@ export const TeamAuditView: React.FC<TeamAuditViewProps> = ({
                 </div>
               </div>
 
-              {/* HIGHLIGHTED CARD: PERFIL DE RECRUTAMENTO & NOTAS DE PROSPEÇÃO */}
-              <div className="bg-[#1c1b1c] border-2 border-[#ff535b]/60 rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col gap-5">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff535b]/5 rounded-full blur-2xl pointer-events-none" />
-
-                <div className="flex items-center justify-between border-b border-[#353436] pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="material-symbols-outlined text-[#ff535b] text-2xl">psychology</span>
-                    <div>
-                      <h3 className="font-extrabold text-base text-[#e5e2e3]">
-                        Perfil de Recrutamento & Diagnóstico de Lacunas
-                      </h3>
-                      <p className="text-xs text-[#e4bebc]">
-                        Registo interno de caraterísticas em falta no plantel face à forma de jogar observada
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-bold font-mono-data bg-[#ff535b]/20 text-[#ffb3b1] px-2.5 py-1 rounded-md border border-[#ff535b]/40">
-                    PRIVADO / SCOUTING
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Text Box 1: Lacunas do Modelo de Jogo */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-xs font-bold text-[#ffb3b1] uppercase tracking-wider flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[16px]">warning_amber</span>
-                      <span>1. Lacunas do Modelo de Jogo Identificadas</span>
-                    </label>
-                    <textarea
-                      value={activeMatch.tacticalGapsNote}
-                      onChange={(e) => handleUpdateNotes('tacticalGapsNote', e.target.value)}
-                      placeholder="ex: Falta capacidade de pressão alta no meio-campo e velocidade de reação após perda da posse de bola..."
-                      rows={4}
-                      className="w-full bg-[#141416] border border-[#353436] focus:border-[#ff535b] text-xs text-[#e5e2e3] rounded-xl p-3 outline-none transition-colors leading-relaxed placeholder:text-[#e4bebc]/40"
-                    />
-                  </div>
-
-                  {/* Text Box 2: Perfil do Atleta Necessário no Mercado */}
-                  <div className="flex flex-col gap-2">
-                    <label className="text-xs font-bold text-[#8abfe4] uppercase tracking-wider flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[16px]">person_search</span>
-                      <span>2. Perfil de Atleta a Buscar no Mercado</span>
-                    </label>
-                    <textarea
-                      value={activeMatch.recruitmentProfileNote}
-                      onChange={(e) => handleUpdateNotes('recruitmentProfileNote', e.target.value)}
-                      placeholder="ex: Precisamos de um Ponta de Lança mais móvel, forte em apoios e ataque aos espaços, e um Médio de desarme..."
-                      rows={4}
-                      className="w-full bg-[#141416] border border-[#353436] focus:border-[#8abfe4] text-xs text-[#e5e2e3] rounded-xl p-3 outline-none transition-colors leading-relaxed placeholder:text-[#e4bebc]/40"
-                    />
-                  </div>
-                </div>
-
-                {/* Save Confirmation Button */}
-                <div className="flex justify-end pt-1">
-                  <button
-                    onClick={() => onTriggerToast('Diagnóstico de recrutamento guardado com sucesso no sistema.')}
-                    className="bg-[#ff535b] hover:brightness-110 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">save</span>
-                    <span>Guardar Notas de Diagnóstico</span>
-                  </button>
-                </div>
-              </div>
+              {/* Relatório de Observação da Equipa (PDF) */}
+              <ReportPdfSection
+                pdfUrl={activeMatch.reportPdfUrl}
+                pdfName={activeMatch.reportPdfName}
+                onChange={(url, name) => handleUpdateMatchReportPdf(url, name)}
+                title="Relatório de Observação da Equipa (PDF)"
+              />
 
               {/* ATTACHMENTS & REPORTS SECTION */}
               <AttachmentsSection

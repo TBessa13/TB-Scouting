@@ -91,12 +91,6 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
       rating: Number(rating) || 4,
       tacticalFitPercent: 85,
       avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80',
-      notes: {
-        tecnica: 'Integrado recentemente no plantel principal.',
-        tatica: 'Adaptável aos padrões da equipa.',
-        fisica: 'Perfil atlético equilibrado.',
-        psicologica: 'Boa atitude de trabalho.',
-      },
       timeline: [],
       isContractExpiringSoon: contractEnd.toLowerCase().includes('2024'),
       seasonStats: {

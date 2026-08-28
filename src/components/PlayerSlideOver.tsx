@@ -27,6 +27,7 @@ import { AIReportModal } from './AIReportModal';
 import { AttachmentsSection } from './AttachmentsSection';
 import { StarRating } from './StarRating';
 import { EditPlayerModal } from './EditPlayerModal';
+import { ReportPdfSection } from './ReportPdfSection';
 
 export interface SimilarMatch {
   player: Player;
@@ -164,103 +165,9 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
   const [activeAccordion, setActiveAccordion] = useState<string | null>('tecnica');
   const [isAiReportOpen, setIsAiReportOpen] = useState(false);
   const [isSimilarModalOpen, setIsSimilarModalOpen] = useState(false);
-  const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTmModalOpen, setIsTmModalOpen] = useState(false);
   const [tmInputUrl, setTmInputUrl] = useState('');
-  const [newNoteText, setNewNoteText] = useState('');
-
-  // Helper to extract logbook history entries (newest first)
-  const getPlayerHistoryNotes = (p: Player | null): NoteEntry[] => {
-    if (!p) return [];
-    if (p.notes?.history && Array.isArray(p.notes.history)) {
-      return p.notes.history;
-    }
-    const fallback: NoteEntry[] = [];
-    if (p.notes?.tatica) {
-      fallback.push({
-        id: 'init-tatica',
-        date: '28 Jul 2026',
-        text: `[Análise Tática] ${p.notes.tatica}`,
-      });
-    }
-    if (p.notes?.tecnica) {
-      fallback.push({
-        id: 'init-tecnica',
-        date: '15 Jul 2026',
-        text: `[Análise Técnica] ${p.notes.tecnica}`,
-      });
-    }
-    if (p.notes?.fisica) {
-      fallback.push({
-        id: 'init-fisica',
-        date: '02 Jul 2026',
-        text: `[Análise Física] ${p.notes.fisica}`,
-      });
-    }
-    if (p.notes?.psicologica) {
-      fallback.push({
-        id: 'init-psicologica',
-        date: '20 Jun 2026',
-        text: `[Análise Atitudinal] ${p.notes.psicologica}`,
-      });
-    }
-    return fallback;
-  };
-
-  const handleAddNote = () => {
-    if (!player) return;
-    if (!newNoteText.trim()) {
-      onTriggerToast('Por favor introduza o texto da observação antes de adicionar.');
-      return;
-    }
-
-    const currentEntries = getPlayerHistoryNotes(player);
-
-    const newEntry: NoteEntry = {
-      id: `note-${Date.now()}`,
-      date: getFormattedCurrentDate(),
-      text: newNoteText.trim(),
-    };
-
-    // Newest entry first (ordenação decrescente)
-    const updatedHistory = [newEntry, ...currentEntries];
-
-    const updatedPlayer: Player = {
-      ...player,
-      notes: {
-        ...player.notes,
-        history: updatedHistory,
-      },
-    };
-
-    if (onUpdatePlayer) {
-      onUpdatePlayer(updatedPlayer);
-    }
-
-    setNewNoteText('');
-    onTriggerToast(`Novo registo adicionado ao Diário de Bordo de ${player.name}!`);
-  };
-
-  const handleDeleteNote = (noteId: string) => {
-    if (!player) return;
-    const currentEntries = getPlayerHistoryNotes(player);
-    const updatedHistory = currentEntries.filter((n) => n.id !== noteId);
-
-    const updatedPlayer: Player = {
-      ...player,
-      notes: {
-        ...player.notes,
-        history: updatedHistory,
-      },
-    };
-
-    if (onUpdatePlayer) {
-      onUpdatePlayer(updatedPlayer);
-    }
-
-    onTriggerToast('Registo removido do Diário de Bordo.');
-  };
 
   const allPlayersList = useMemo(() => {
     if (allPlayers && allPlayers.length > 0) return allPlayers;
@@ -271,33 +178,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
     if (!player) return [];
     return computeSimilarPlayers(player, allPlayersList);
   }, [player, allPlayersList]);
-
-  // Edit states for notes & ratings
-  const [tecnicaText, setTecnicaText] = useState('');
-  const [taticaText, setTaticaText] = useState('');
-  const [fisicaText, setFisicaText] = useState('');
-  const [psicologicaText, setPsicologicaText] = useState('');
-
-  const [tecnicaVal, setTecnicaVal] = useState<number>(16);
-  const [taticaVal, setTaticaVal] = useState<number>(16);
-  const [fisicaVal, setFisicaVal] = useState<number>(16);
-  const [psicologicaVal, setPsicologicaVal] = useState<number>(16);
-
-  useEffect(() => {
-    if (player) {
-      const defaultBase = player.rating * 4;
-      setTecnicaText(player.notes.tecnica);
-      setTaticaText(player.notes.tatica);
-      setFisicaText(player.notes.fisica);
-      setPsicologicaText(player.notes.psicologica);
-
-      setTecnicaVal(getCategoryDisplayRating(player.notes.tecnicaRating, defaultBase, ratingSystem));
-      setTaticaVal(getCategoryDisplayRating(player.notes.taticaRating, defaultBase, ratingSystem));
-      setFisicaVal(getCategoryDisplayRating(player.notes.fisicaRating, defaultBase, ratingSystem));
-      setPsicologicaVal(getCategoryDisplayRating(player.notes.psicologicaRating, defaultBase, ratingSystem));
-      setIsEditingNotes(false);
-    }
-  }, [player, ratingSystem]);
 
   // ESC key listener to close panel
   useEffect(() => {
@@ -313,42 +193,17 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
 
   if (!player) return null;
 
-  const defaultBaseRating = player.rating * 4;
-  const tecnicaDisplay = getCategoryDisplayRating(player.notes.tecnicaRating, defaultBaseRating, ratingSystem);
-  const taticaDisplay = getCategoryDisplayRating(player.notes.taticaRating, defaultBaseRating, ratingSystem);
-  const fisicaDisplay = getCategoryDisplayRating(player.notes.fisicaRating, defaultBaseRating, ratingSystem);
-  const psicologicaDisplay = getCategoryDisplayRating(player.notes.psicologicaRating, defaultBaseRating, ratingSystem);
-
-  const maxScaleVal = getSystemMaxVal(ratingSystem);
-
   const toggleAccordion = (key: string) => {
     setActiveAccordion(prev => (prev === key ? null : key));
   };
 
-  const handleSaveNotes = () => {
-    const updatedPlayer: Player = {
-      ...player,
-      notes: {
-        tecnica: tecnicaText,
-        tatica: taticaText,
-        fisica: fisicaText,
-        psicologica: psicologicaText,
-        tecnicaRating: convertCategoryInputToBase20(tecnicaVal, ratingSystem),
-        taticaRating: convertCategoryInputToBase20(taticaVal, ratingSystem),
-        fisicaRating: convertCategoryInputToBase20(fisicaVal, ratingSystem),
-        psicologicaRating: convertCategoryInputToBase20(psicologicaVal, ratingSystem),
-      },
-    };
-
-    if (onUpdatePlayer) {
-      onUpdatePlayer(updatedPlayer);
-    }
-    setIsEditingNotes(false);
-    onTriggerToast(`Relatório de observação e avaliações de ${player.name} atualizados com sucesso!`);
-  };
-
   const handleDownloadPdf = () => {
-    onTriggerToast(`Relatório PDF completo de ${player.name} descarregado com sucesso.`);
+    if (player.reportPdfUrl) {
+      window.open(player.reportPdfUrl, '_blank', 'noopener,noreferrer');
+      onTriggerToast(`A abrir Relatório de Observação PDF de ${player.name}...`);
+    } else {
+      onTriggerToast(`Relatório PDF completo de ${player.name} descarregado com sucesso.`);
+    }
   };
 
   const handleOpenWyscout = (e?: React.MouseEvent) => {
@@ -801,99 +656,13 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
             </div>
           </section>
 
-          {/* Diário de Bordo (Notas de Observação em Linha do Tempo / Timeline) */}
-          <section className="flex flex-col gap-4 bg-[#141416] border border-[#26262B] rounded-2xl p-5 shadow-xl">
-            <div className="flex items-center justify-between border-b border-[#26262B] pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#ff535b]/20 border border-[#ff535b] flex items-center justify-center text-[#ff535b]">
-                  <span className="material-symbols-outlined text-[20px]">menu_book</span>
-                </div>
-                <div className="flex flex-col">
-                  <h3 className="font-extrabold text-sm text-[#e5e2e3] uppercase tracking-wider">
-                    Diário de Bordo do Atleta
-                  </h3>
-                  <span className="text-[10px] text-[#e4bebc]/70">Análises tático-físicas e registos de campo</span>
-                </div>
-              </div>
-              <span className="font-mono-data font-bold text-xs text-[#ffb3b1] bg-[#ff535b]/10 border border-[#ff535b]/30 px-2 py-0.5 rounded">
-                {getPlayerHistoryNotes(player).length} {getPlayerHistoryNotes(player).length === 1 ? 'Registo' : 'Registos'}
-              </span>
-            </div>
-
-            {/* Interface de Inserção de Registo */}
-            <div className="flex flex-col gap-2.5 bg-[#0A0A0B] border border-[#26262B] p-3.5 rounded-xl">
-              <label className="text-xs font-bold text-[#e5e2e3] uppercase flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px] text-[#ff535b]">edit_note</span>
-                <span>Nova Observação Tática / Física</span>
-              </label>
-              <textarea
-                rows={3}
-                value={newNoteText}
-                onChange={(e) => setNewNoteText(e.target.value)}
-                placeholder="Escreva aqui a análise tática, desempenho físico ou impressão da última sessão..."
-                className="w-full bg-[#141416] border border-[#353436] focus:border-[#ff535b] text-[#e5e2e3] text-xs p-3 rounded-lg outline-none transition-colors leading-relaxed resize-none placeholder:text-[#e4bebc]/50"
-              />
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-1">
-                <span className="text-[11px] text-[#e4bebc]/70 font-mono-data">
-                  Data do registo: <strong className="text-[#ffb3b1]">{getFormattedCurrentDate()}</strong>
-                </span>
-                <button
-                  type="button"
-                  onClick={handleAddNote}
-                  className="w-full sm:w-auto bg-[#ff535b] hover:brightness-110 text-white font-bold text-xs px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
-                >
-                  <span className="material-symbols-outlined text-[16px]">post_add</span>
-                  <span>Adicionar Registo</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Visualização em Linha do Tempo (Timeline) */}
-            <div className="flex flex-col gap-3 pt-2">
-              <span className="text-xs font-bold text-[#e4bebc] uppercase tracking-wider flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px] text-[#ff535b]">timeline</span>
-                Linha do Tempo de Observações
-              </span>
-
-              {getPlayerHistoryNotes(player).length === 0 ? (
-                <div className="p-6 text-center border border-dashed border-[#353436] rounded-xl text-xs text-[#e4bebc]/70">
-                  Nenhum registo de observação inserido.
-                </div>
-              ) : (
-                <div className="relative pl-5 ml-2 border-l-2 border-[#26262B] flex flex-col gap-3.5">
-                  {getPlayerHistoryNotes(player).map((entry, idx) => (
-                    <div key={entry.id || idx} className="relative group">
-                      {/* Node da timeline */}
-                      <div className="absolute -left-[27px] top-1.5 w-3.5 h-3.5 rounded-full bg-[#141416] border-2 border-[#ff535b] flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#ff535b]" />
-                      </div>
-
-                      {/* Bloco da Observação */}
-                      <div className="bg-[#0A0A0B] border border-[#26262B] hover:border-[#ff535b]/50 p-3.5 rounded-xl flex flex-col gap-2 transition-all shadow-sm">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono-data font-bold text-[#ffb3b1] bg-[#ff535b]/15 border border-[#ff535b]/30 px-2 py-0.5 rounded">
-                            {entry.date}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteNote(entry.id)}
-                            className="opacity-0 group-hover:opacity-100 text-[#e4bebc]/60 hover:text-[#ff535b] transition-all text-xs flex items-center gap-1 p-0.5 cursor-pointer"
-                            title="Remover registo"
-                          >
-                            <span className="material-symbols-outlined text-[14px]">delete</span>
-                          </button>
-                        </div>
-
-                        <p className="text-xs text-[#e5e2e3] leading-relaxed whitespace-pre-wrap">
-                          {entry.text}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
+          {/* Relatório de Observação (PDF) */}
+          <ReportPdfSection
+            pdfUrl={player.reportPdfUrl}
+            pdfName={player.reportPdfName}
+            readOnly={true}
+            title="Relatório de Observação"
+          />
 
           {/* Observation History Timeline */}
           <section className="mt-2">

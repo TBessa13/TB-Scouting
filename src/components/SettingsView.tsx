@@ -75,6 +75,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       if (player.wyscoutUrl) {
         xmlLines.push(`      <WyscoutUrl>${escapeXml(player.wyscoutUrl)}</WyscoutUrl>`);
       }
+      if (player.reportPdfUrl) {
+        xmlLines.push(`      <ReportPdfUrl>${escapeXml(player.reportPdfUrl)}</ReportPdfUrl>`);
+      }
       xmlLines.push('      <Attributes>');
       xmlLines.push(`        <Technical>${player.technicalScore}</Technical>`);
       xmlLines.push(`        <Tactical>${player.tacticalScore}</Tactical>`);
@@ -108,11 +111,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    onTriggerToast('Ficheiro XML com a base de dados de Scouting exportado com sucesso!');
+    onTriggerToast('Base de dados completa de Scouting exportada em XML com sucesso!');
   };
 
   const handleExportCsv = () => {
-    const headers = ['ID', 'Nome', 'Posicao', 'Idade', 'Clube', 'Nacionalidade', 'Estado', 'NotaGeral', 'Potencial', 'FimContrato', 'TransfermarktUrl', 'ZerozeroUrl'];
+    const headers = ['ID', 'Name', 'Position', 'Age', 'Club', 'Nationality', 'Status', 'OverallScore', 'PotentialScore', 'ContractEnd', 'TransfermarktUrl', 'ZerozeroUrl', 'WyscoutUrl', 'ReportPdfUrl'];
     const rows = players.map(p => [
       p.id,
       `"${p.name.replace(/"/g, '""')}"`,
@@ -125,7 +128,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       p.potentialScore,
       `"${p.contractEnd.replace(/"/g, '""')}"`,
       `"${p.transfermarktUrl || ''}"`,
-      `"${p.zerozeroUrl || ''}"`
+      `"${p.zerozeroUrl || ''}"`,
+      `"${p.wyscoutUrl || ''}"`,
+      `"${p.reportPdfUrl || ''}"`
     ]);
 
     const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');

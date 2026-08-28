@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Player, PlayerStatus, PositionCode } from '../types';
 import { NATIONALITY_OPTIONS, getFlagForNationality } from '../data/nationalities';
+import { ReportPdfSection } from './ReportPdfSection';
 
 interface EditPlayerModalProps {
   player: Player;
@@ -49,11 +50,9 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
     player.rating == null || player.rating === 0
   );
 
-  // Notes
-  const [tecnicaNote, setTecnicaNote] = useState(player.notes?.tecnica || '');
-  const [taticaNote, setTaticaNote] = useState(player.notes?.tatica || '');
-  const [fisicaNote, setFisicaNote] = useState(player.notes?.fisica || '');
-  const [psicologicaNote, setPsicologicaNote] = useState(player.notes?.psicologica || '');
+  // Relatório de Observação (PDF)
+  const [reportPdfUrl, setReportPdfUrl] = useState<string | undefined>(player.reportPdfUrl);
+  const [reportPdfName, setReportPdfName] = useState<string | undefined>(player.reportPdfName);
 
   // External Links
   const [wyscoutUrl, setWyscoutUrl] = useState(player.wyscoutUrl || '');
@@ -98,13 +97,8 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
       pipelineStage,
       rating: isRatingUnevaluated ? null : (rating ?? 3),
       tacticalFitPercent: isTacticalUnevaluated ? null : (tacticalFitPercent ?? 75),
-      notes: {
-        ...player.notes,
-        tecnica: tecnicaNote,
-        tatica: taticaNote,
-        fisica: fisicaNote,
-        psicologica: psicologicaNote,
-      },
+      reportPdfUrl,
+      reportPdfName,
       wyscoutUrl: wyscoutUrl.trim() || undefined,
       transfermarktUrl: transfermarktUrl.trim() || undefined,
       zerozeroUrl: zerozeroUrl.trim() || undefined,
@@ -413,58 +407,15 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
             </div>
           </div>
 
-          {/* Section 3: Observações & Avaliação */}
-          <div className="flex flex-col gap-3">
-            <h3 className="text-xs font-bold text-[#ffb3b1] uppercase tracking-wider border-b border-[#26262B] pb-1">
-              OBSERVAÇÕES DE PROSPEÇÃO (NOTAS DO SCOUT)
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Análise Técnica</label>
-                <textarea
-                  value={tecnicaNote}
-                  onChange={(e) => setTecnicaNote(e.target.value)}
-                  rows={2}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl p-2.5 outline-none focus:border-[#ff535b]"
-                  placeholder="Capacidade de passe, primeiro toque, drible..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Análise Tática</label>
-                <textarea
-                  value={taticaNote}
-                  onChange={(e) => setTaticaNote(e.target.value)}
-                  rows={2}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl p-2.5 outline-none focus:border-[#ff535b]"
-                  placeholder="Posicionamento, leitura de jogo, transições..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Análise Física</label>
-                <textarea
-                  value={fisicaNote}
-                  onChange={(e) => setFisicaNote(e.target.value)}
-                  rows={2}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl p-2.5 outline-none focus:border-[#ff535b]"
-                  placeholder="Arranque, velocidade máxima, duelos aéreos..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Análise Psicológica</label>
-                <textarea
-                  value={psicologicaNote}
-                  onChange={(e) => setPsicologicaNote(e.target.value)}
-                  rows={2}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl p-2.5 outline-none focus:border-[#ff535b]"
-                  placeholder="Liderança, foco sob pressão, atitude..."
-                />
-              </div>
-            </div>
-          </div>
+          {/* Section 3: Relatório de Observação (PDF ou Link Cloud) */}
+          <ReportPdfSection
+            pdfUrl={reportPdfUrl}
+            pdfName={reportPdfName}
+            onChange={(url, name) => {
+              setReportPdfUrl(url);
+              setReportPdfName(name);
+            }}
+          />
 
           {/* Section 4: Links Externos */}
           <div className="flex flex-col gap-3">

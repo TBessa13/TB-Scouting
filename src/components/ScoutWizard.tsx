@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Player, PlayerStatus, PositionCode, RatingSystem, convertCategoryInputToBase20, getSystemMaxVal } from '../types';
 import { NATIONALITY_OPTIONS, getFlagForNationality } from '../data/nationalities';
 import { StarRating } from './StarRating';
+import { ReportPdfSection } from './ReportPdfSection';
 
 interface ScoutWizardProps {
   onCancel: () => void;
@@ -36,10 +37,9 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
   const [fisicaVal, setFisicaVal] = useState(defaultCategoryRating);
   const [psicologicaVal, setPsicologicaVal] = useState(defaultCategoryRating);
 
-  const [tecnicaNote, setTecnicaNote] = useState('Boa receção orientada, passe consistente em apoios curtos.');
-  const [taticaNote, setTaticaNote] = useState('Movimentação em apoios frontais e leitura dos espaços na área.');
-  const [fisicaNote, setFisicaNote] = useState('Boa velocidade de arranque e resistência física.');
-  const [psicologicaNote, setPsicologicaNote] = useState('Focado, atitude competitiva e boa comunicação.');
+  const [reportPdfUrl, setReportPdfUrl] = useState<string | undefined>(undefined);
+  const [reportPdfName, setReportPdfName] = useState<string | undefined>(undefined);
+  
   const [wyscoutUrl, setWyscoutUrl] = useState('https://wyscout.com');
   const [transfermarktUrl, setTransfermarktUrl] = useState('https://www.transfermarkt.pt');
   const [zerozeroUrl, setZerozeroUrl] = useState('https://www.zerozero.pt');
@@ -88,12 +88,8 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
       rating: null,
       tacticalFitPercent: null,
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-      notes: {
-        tecnica: 'Sinalizado para avaliação posterior.',
-        tatica: 'Sinalizado para avaliação posterior.',
-        fisica: 'Sinalizado para avaliação posterior.',
-        psicologica: 'Sinalizado para avaliação posterior.',
-      },
+      reportPdfUrl,
+      reportPdfName,
       timeline: [
         {
           id: `t_${Date.now()}`,
@@ -147,16 +143,8 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
       rating,
       tacticalFitPercent,
       avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-      notes: {
-        tecnica: tecnicaNote,
-        tatica: taticaNote,
-        fisica: fisicaNote,
-        psicologica: psicologicaNote,
-        tecnicaRating: convertCategoryInputToBase20(tecnicaVal, ratingSystem),
-        taticaRating: convertCategoryInputToBase20(taticaVal, ratingSystem),
-        fisicaRating: convertCategoryInputToBase20(fisicaVal, ratingSystem),
-        psicologicaRating: convertCategoryInputToBase20(psicologicaVal, ratingSystem),
-      },
+      reportPdfUrl,
+      reportPdfName,
       timeline: [
         {
           id: `t_${Date.now()}`,
@@ -428,164 +416,15 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
               </div>
             </div>
 
-            {/* Qualitative Observation Fields & Category Ratings */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Técnica */}
-              <div className="flex flex-col gap-2 bg-[#131314] p-3 rounded-lg border border-[#26262B]">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-[#ffb3b1] uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#ffb3b1]" />
-                    Análise Técnica
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono-data text-[#e4bebc]">Nota:</span>
-                    <StarRating value={tecnicaVal <= 5 ? tecnicaVal : tecnicaVal / 4} size="xs" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min={1}
-                    max={maxScaleVal}
-                    value={tecnicaVal}
-                    onChange={(e) => setTecnicaVal(Number(e.target.value))}
-                    className="flex-1 accent-[#ff535b] cursor-pointer"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={maxScaleVal}
-                    value={tecnicaVal}
-                    onChange={(e) => setTecnicaVal(Math.min(maxScaleVal, Math.max(1, Number(e.target.value))))}
-                    className="w-14 bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] font-mono-data text-center font-bold text-xs py-1 rounded"
-                  />
-                </div>
-                <textarea
-                  value={tecnicaNote}
-                  onChange={(e) => setTecnicaNote(e.target.value)}
-                  rows={2}
-                  className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] p-2.5 text-xs focus:border-[#ff535b] focus:outline-none"
-                  placeholder="Observações técnicas..."
-                />
-              </div>
-
-              {/* Tática */}
-              <div className="flex flex-col gap-2 bg-[#131314] p-3 rounded-lg border border-[#26262B]">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-[#98cdf2] uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#98cdf2]" />
-                    Análise Tática
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono-data text-[#e4bebc]">Nota:</span>
-                    <StarRating value={taticaVal <= 5 ? taticaVal : taticaVal / 4} size="xs" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min={1}
-                    max={maxScaleVal}
-                    value={taticaVal}
-                    onChange={(e) => setTaticaVal(Number(e.target.value))}
-                    className="flex-1 accent-[#ff535b] cursor-pointer"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={maxScaleVal}
-                    value={taticaVal}
-                    onChange={(e) => setTaticaVal(Math.min(maxScaleVal, Math.max(1, Number(e.target.value))))}
-                    className="w-14 bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] font-mono-data text-center font-bold text-xs py-1 rounded"
-                  />
-                </div>
-                <textarea
-                  value={taticaNote}
-                  onChange={(e) => setTaticaNote(e.target.value)}
-                  rows={2}
-                  className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] p-2.5 text-xs focus:border-[#98cdf2] focus:outline-none"
-                  placeholder="Observações táticas..."
-                />
-              </div>
-
-              {/* Física */}
-              <div className="flex flex-col gap-2 bg-[#131314] p-3 rounded-lg border border-[#26262B]">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-[#c0c9be] uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#c0c9be]" />
-                    Análise Física
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono-data text-[#e4bebc]">Nota:</span>
-                    <StarRating value={fisicaVal <= 5 ? fisicaVal : fisicaVal / 4} size="xs" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min={1}
-                    max={maxScaleVal}
-                    value={fisicaVal}
-                    onChange={(e) => setFisicaVal(Number(e.target.value))}
-                    className="flex-1 accent-[#ff535b] cursor-pointer"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={maxScaleVal}
-                    value={fisicaVal}
-                    onChange={(e) => setFisicaVal(Math.min(maxScaleVal, Math.max(1, Number(e.target.value))))}
-                    className="w-14 bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] font-mono-data text-center font-bold text-xs py-1 rounded"
-                  />
-                </div>
-                <textarea
-                  value={fisicaNote}
-                  onChange={(e) => setFisicaNote(e.target.value)}
-                  rows={2}
-                  className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] p-2.5 text-xs focus:border-[#c0c9be] focus:outline-none"
-                  placeholder="Observações físicas..."
-                />
-              </div>
-
-              {/* Psicológica */}
-              <div className="flex flex-col gap-2 bg-[#131314] p-3 rounded-lg border border-[#26262B]">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-[#8a9389] uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#8a9389]" />
-                    Atitude & Psicológica
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono-data text-[#e4bebc]">Nota:</span>
-                    <StarRating value={psicologicaVal <= 5 ? psicologicaVal : psicologicaVal / 4} size="xs" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min={1}
-                    max={maxScaleVal}
-                    value={psicologicaVal}
-                    onChange={(e) => setPsicologicaVal(Number(e.target.value))}
-                    className="flex-1 accent-[#ff535b] cursor-pointer"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={maxScaleVal}
-                    value={psicologicaVal}
-                    onChange={(e) => setPsicologicaVal(Math.min(maxScaleVal, Math.max(1, Number(e.target.value))))}
-                    className="w-14 bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] font-mono-data text-center font-bold text-xs py-1 rounded"
-                  />
-                </div>
-                <textarea
-                  value={psicologicaNote}
-                  onChange={(e) => setPsicologicaNote(e.target.value)}
-                  rows={2}
-                  className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] p-2.5 text-xs focus:border-[#8a9389] focus:outline-none"
-                  placeholder="Observações psicológicas..."
-                />
-              </div>
-            </div>
+            {/* Relatório de Observação (PDF ou Link Cloud) */}
+            <ReportPdfSection
+              pdfUrl={reportPdfUrl}
+              pdfName={reportPdfName}
+              onChange={(url, name) => {
+                setReportPdfUrl(url);
+                setReportPdfName(name);
+              }}
+            />
 
             {/* Platform & External links */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

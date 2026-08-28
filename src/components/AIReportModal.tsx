@@ -50,19 +50,19 @@ export const AIReportModal: React.FC<AIReportModalProps> = ({
     setTimeout(() => {
       setAiReportContent(`
 1. PERFIL E IMPACTO IMEDIATO
-O atleta ${player.name} (${getPlayerAge(player)} anos, ${player.position}) apresenta um perfil tático de elevada afinidade com o modelo de jogo do clube (${player.tacticalFitPercent}% de Adequação Tática). Representa uma excelente oportunidade estratégica para reforçar a equipa, especialmente considerando que o seu vínculo contratual atual expira em ${player.contractEnd}.
+O atleta ${player.name} (${getPlayerAge(player)} anos, ${player.position}) apresenta um perfil de afinidade com o modelo de jogo do clube (${player.tacticalFitPercent != null ? `${player.tacticalFitPercent}% de Adequação Tática` : 'Adequação Tática em Avaliação'}). Representa uma oportunidade estratégica com vínculo contratual até ${player.contractEnd}.
 
-2. ANÁLISE MULTIDIMENSIONAL DAS NOTAS DE OBSERVAÇÃO
-• Dimensão Técnica: ${player.notes.tecnica}
-• Dimensão Tática: ${player.notes.tatica}
-• Dimensão Física: ${player.notes.fisica}
-• Dimensão Psicológica & Atitude: ${player.notes.psicologica}
+2. ANÁLISE DO RELATÓRIO DE OBSERVAÇÃO
+${player.reportPdfUrl ? `• Relatório de Observação em PDF anexado (${player.reportPdfName || 'Relatorio_Observacao.pdf'}).` : '• Relatório de Observação PDF: Por anexar / Em fase de consolidação.'}
+• Posição: ${player.position}
+• Avaliação Global: ${player.rating != null ? `${player.rating} / 5 estrelas` : 'Por definir'}
+• Recomendação no Quadro: ${player.status}
 
 3. SÍNTESE DE RISCO E ADEQUAÇÃO
-A análise telemétrica e de vídeo demonstra um risco de adaptação baixo. O jogador possui atributos táticos maduros para integrar diretamente a dinâmica da equipa principal sem necessidade de longo período de transição.
+A análise contextual e telemétrica demonstra prontidão competitiva. O jogador possui atributos sólidos para responder às exigências competitivas da época.
 
 4. PARECER FINAL DO DEPARTAMENTO DE SCOUTING
-RECOMENDAÇÃO: Avançar com proposta formal de contratação / acompanhamento prioritário.
+RECOMENDAÇÃO: ${player.status === 'hire' ? 'Avançar com proposta formal de contratação.' : player.status === 'track' ? 'Manter em observação prioritária contínua.' : player.status === 'discard' ? 'Não prioritário para contratação.' : 'Avaliação contínua pelo gabinete de prospeção.'}
       `);
       setIsGenerating(false);
     }, 700);
