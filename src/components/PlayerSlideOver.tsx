@@ -248,17 +248,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
                     open_in_new
                   </span>
                 </button>
-                <button
-                  type="button"
-                  onClick={handleOpenWyscout}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono-data font-bold bg-[#141416] hover:bg-[#26262B] text-[#e4bebc] hover:text-[#ff535b] border border-[#353436] hover:border-[#ff535b]/60 transition-all duration-200 cursor-pointer shadow-sm group"
-                  title={`Aceder ao perfil de ${player.name} no Wyscout`}
-                >
-                  <span>WY</span>
-                  <span className="material-symbols-outlined text-[13px] text-[#e4bebc] group-hover:text-[#ff535b] transition-colors duration-200">
-                    open_in_new
-                  </span>
-                </button>
               </div>
               <div className="flex items-center gap-2 mt-1">
                 <span className="bg-[#ff535b] text-[#5b000e] px-2 py-0.5 rounded text-xs font-bold border border-[#ab8987] shrink-0">
