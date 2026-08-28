@@ -23,95 +23,11 @@ export function getFormattedCurrentDate(): string {
   const year = now.getFullYear();
   return `${day} ${month} ${year}`;
 }
-import { AIReportModal } from './AIReportModal';
+
 import { AttachmentsSection } from './AttachmentsSection';
 import { StarRating } from './StarRating';
 import { EditPlayerModal } from './EditPlayerModal';
 import { ReportPdfSection } from './ReportPdfSection';
-
-export interface SimilarMatch {
-  player: Player;
-  similarityPercent: number;
-  matchedCriteriaCount: number;
-  matchedCriteria: string[];
-}
-
-export function computeSimilarPlayers(
-  targetPlayer: Player,
-  globalList: Player[]
-): SimilarMatch[] {
-  const targetAge = getPlayerAge(targetPlayer);
-  const targetRatingVal = targetPlayer.rating <= 5 ? targetPlayer.rating : targetPlayer.rating / 4;
-
-  const results: SimilarMatch[] = [];
-
-  for (const p of globalList) {
-    if (p.id === targetPlayer.id) continue;
-
-    const pAge = getPlayerAge(p);
-    const pRatingVal = p.rating <= 5 ? p.rating : p.rating / 4;
-
-    const samePosition = p.position === targetPlayer.position;
-    const sameFoot = p.dominantFoot === targetPlayer.dominantFoot;
-    const ageDiff = Math.abs(pAge - targetAge);
-    const approxAge = ageDiff <= 3;
-    const ratingDiff = Math.abs(pRatingVal - targetRatingVal);
-    const similarRating = ratingDiff <= 1.0;
-
-    let count = 0;
-    const matched: string[] = [];
-
-    if (samePosition) {
-      count++;
-      matched.push('Posição');
-    }
-    if (sameFoot) {
-      count++;
-      matched.push('Pé ' + p.dominantFoot);
-    }
-    if (approxAge) {
-      count++;
-      matched.push('Idade (~' + pAge + 'a)');
-    }
-    if (similarRating) {
-      count++;
-      matched.push('Rating (~' + Math.round(pRatingVal) + '★)');
-    }
-
-    // Must share at least 3 of 4 fundamental criteria
-    if (count >= 3) {
-      let rawScore = 0;
-      rawScore += samePosition ? 35 : 10;
-      rawScore += sameFoot ? 15 : 5;
-      if (ratingDiff === 0) rawScore += 30;
-      else if (ratingDiff <= 0.5) rawScore += 24;
-      else rawScore += 18;
-
-      if (ageDiff === 0) rawScore += 20;
-      else if (ageDiff === 1) rawScore += 17;
-      else if (ageDiff === 2) rawScore += 14;
-      else rawScore += 10;
-
-      const similarityPercent = Math.min(98, Math.max(76, Math.round(rawScore)));
-
-      results.push({
-        player: p,
-        similarityPercent,
-        matchedCriteriaCount: count,
-        matchedCriteria: matched,
-      });
-    }
-  }
-
-  results.sort((a, b) => {
-    if (b.similarityPercent !== a.similarityPercent) {
-      return b.similarityPercent - a.similarityPercent;
-    }
-    return b.player.rating - a.player.rating;
-  });
-
-  return results.slice(0, 5);
-}
 
 interface PlayerSlideOverProps {
   player: Player | null;
@@ -163,8 +79,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
        player.club === 'Plantel Atual')
     : false;
   const [activeAccordion, setActiveAccordion] = useState<string | null>('tecnica');
-  const [isAiReportOpen, setIsAiReportOpen] = useState(false);
-  const [isSimilarModalOpen, setIsSimilarModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTmModalOpen, setIsTmModalOpen] = useState(false);
   const [tmInputUrl, setTmInputUrl] = useState('');
@@ -195,16 +109,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
     setIsSavingNotes(false);
     onTriggerToast(`Apontamentos gerais de ${player.name} guardados com sucesso!`);
   };
-
-  const allPlayersList = useMemo(() => {
-    if (allPlayers && allPlayers.length > 0) return allPlayers;
-    return squadPlayers || [];
-  }, [allPlayers, squadPlayers]);
-
-  const similarMatches = useMemo(() => {
-    if (!player) return [];
-    return computeSimilarPlayers(player, allPlayersList);
-  }, [player, allPlayersList]);
 
   // ESC key listener to close panel
   useEffect(() => {
@@ -598,86 +502,52 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
             </div>
           </section>
 
-          {/* AI Executive Report Section (AI Report Generator) */}
-          <section className="bg-gradient-to-br from-[#1C1C1F] to-[#131314] border border-[#ff535b]/60 rounded-xl p-4.5 flex flex-col gap-3.5 shadow-lg relative h-auto min-h-fit my-1">
-            <div className="absolute -top-10 -right-10 w-28 h-28 bg-[#ff535b]/10 rounded-full blur-2xl pointer-events-none" />
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#ff535b] text-[20px]">
-                  auto_awesome
-                </span>
-                <span className="text-xs font-extrabold uppercase tracking-wider text-[#e5e2e3]">
-                  AI Executive Report
-                </span>
-              </div>
-              <span className="text-[10px] font-mono-data bg-[#ff535b]/20 text-[#ffb3b1] px-2 py-0.5 rounded font-bold border border-[#ff535b]/40">
-                1-Page Summary
+          {/* Plataformas & Links Externos */}
+          <section className="bg-[#141416] border border-[#26262B] rounded-xl p-3.5 flex flex-col gap-2.5 shadow-sm">
+            <div className="flex items-center gap-2 border-b border-[#26262B] pb-2">
+              <span className="material-symbols-outlined text-[#ff535b] text-[18px]">link</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-[#e5e2e3]">
+                Plataformas & Acessos
               </span>
             </div>
 
-            <p className="text-[11px] text-[#e4bebc] leading-relaxed">
-              Sintetiza automaticamente as notas técnicas, táticas, físicas e atitude do jogador num parecer executivo para a Direção Desportiva.
-            </p>
-
-            <button
-              onClick={() => setIsAiReportOpen(true)}
-              className="w-full bg-[#ff535b] hover:brightness-110 transition-all text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-bold text-xs uppercase tracking-wider shadow-md cursor-pointer active:scale-[0.98] h-auto min-h-[42px]"
-            >
-              <span className="material-symbols-outlined text-[18px]">auto_fix_high</span>
-              <span>Gerar Relatório Executivo (IA)</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setIsSimilarModalOpen(true);
-                onTriggerToast(`A analisar a base global para encontrar alternativas idênticas a ${player.name}...`);
-              }}
-              className="w-full bg-[#1C1C1F] hover:bg-[#26262B] text-[#e5e2e3] hover:text-[#ffb3b1] border border-[#353436] hover:border-[#ff535b]/60 transition-all text-xs font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 uppercase tracking-wider cursor-pointer active:scale-[0.98] shadow-sm h-auto min-h-[40px]"
-            >
-              <span className="material-symbols-outlined text-[#ff535b] text-[18px]">
-                psychology
-              </span>
-              <span>Procurar Semelhantes</span>
-            </button>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1 h-auto min-h-fit">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <button
+                type="button"
                 onClick={handleDownloadPdf}
-                className="bg-[#141416] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] py-2 px-2 rounded-lg flex items-center justify-center gap-1 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
+                className="bg-[#0A0A0B] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] py-2 px-2 rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
               >
-                <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+                <span className="material-symbols-outlined text-[16px] text-[#ff535b]">picture_as_pdf</span>
                 <span>PDF</span>
               </button>
 
               <button
+                type="button"
                 onClick={handleOpenWyscout}
-                className="bg-[#141416] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] hover:text-[#ff535b] py-2 px-2 rounded-lg flex items-center justify-center gap-1 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
+                className="bg-[#0A0A0B] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] hover:text-[#ff535b] py-2 px-2 rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
                 title={`Aceder ao perfil de ${player.name} no Wyscout`}
               >
-                <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                <span className="material-symbols-outlined text-[16px] text-[#ff535b]">open_in_new</span>
                 <span>Wyscout</span>
               </button>
 
               <button
+                type="button"
                 onClick={handleOpenTransfermarkt}
-                className="bg-[#141416] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] hover:text-[#ff535b] py-2 px-2 rounded-lg flex items-center justify-center gap-1 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
+                className="bg-[#0A0A0B] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] hover:text-[#ff535b] py-2 px-2 rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
                 title={`Aceder ao perfil de ${player.name} no Transfermarkt`}
               >
-                <span className="material-symbols-outlined text-[16px]">
-                  open_in_new
-                </span>
+                <span className="material-symbols-outlined text-[16px] text-[#ff535b]">open_in_new</span>
                 <span>Transfermarkt</span>
               </button>
 
               <button
+                type="button"
                 onClick={handleOpenZerozero}
-                className="bg-[#141416] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] hover:text-[#ff535b] py-2 px-2 rounded-lg flex items-center justify-center gap-1 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
+                className="bg-[#0A0A0B] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] hover:text-[#ff535b] py-2 px-2 rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
                 title={`Aceder ao perfil de ${player.name} no zerozero`}
               >
-                <span className="material-symbols-outlined text-[16px]">
-                  open_in_new
-                </span>
+                <span className="material-symbols-outlined text-[16px] text-[#ff535b]">open_in_new</span>
                 <span>zerozero</span>
               </button>
             </div>
@@ -750,14 +620,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
 
         </div>
       </div>
-
-      {/* AI REPORT MODAL */}
-      <AIReportModal
-        player={player}
-        isOpen={isAiReportOpen}
-        onClose={() => setIsAiReportOpen(false)}
-        onTriggerToast={onTriggerToast}
-      />
 
       {/* TRANSFERMARKT CONFIGURATION MODAL */}
       {isTmModalOpen && (
@@ -833,149 +695,6 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* MOTOR DE SIMILARIDADE PREDITIVA MODAL */}
-      {isSimilarModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#141416] border border-[#353436] w-full max-w-xl rounded-2xl p-6 shadow-2xl flex flex-col gap-4 relative">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#26262B] pb-3.5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#ff535b]/20 border border-[#ff535b]/40 flex items-center justify-center text-[#ff535b] shadow-[0_0_12px_rgba(255,83,91,0.25)]">
-                  <span className="material-symbols-outlined text-[22px]">psychology</span>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-extrabold text-base text-[#e5e2e3]">Motor de Similaridade Preditiva</h3>
-                    <span className="bg-[#ff535b]/20 text-[#ffb3b1] border border-[#ff535b]/40 text-[10px] font-mono-data font-bold px-2 py-0.5 rounded">
-                      Scouting IA
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#e4bebc] mt-0.5">
-                    Alternativas no mercado com perfil idêntico a <strong className="text-white">{player.name}</strong>
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsSimilarModalOpen(false)}
-                className="w-8 h-8 rounded-lg bg-[#26262B] hover:bg-[#ff535b] text-[#e4bebc] hover:text-white flex items-center justify-center transition-colors cursor-pointer text-xs font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Target Specs Summary Banner */}
-            <div className="bg-[#1c1b1c] border border-[#26262B] rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs font-mono-data text-[#e4bebc]">
-              <div className="flex items-center gap-2">
-                <span className="text-[#ff535b] font-bold">Análise Base:</span>
-                <span className="bg-[#26262B] text-white px-2 py-0.5 rounded font-bold">{player.position}</span>
-                <div className="flex items-center gap-1">
-                  <span>• Pé:</span>
-                  <FootIndicator foot={player.dominantFoot} />
-                </div>
-                <span>• {getPlayerAge(player)} anos</span>
-              </div>
-              <div className="inline-flex items-center gap-1 bg-[#141416] px-2 py-0.5 rounded border border-[#353436]">
-                <StarRating value={player.rating} size="xs" variant="single" />
-              </div>
-            </div>
-
-            {/* Results List */}
-            <div className="flex flex-col gap-2.5 max-h-[380px] overflow-y-auto pr-1">
-              {similarMatches.length > 0 ? (
-                similarMatches.map((match) => (
-                  <div
-                    key={match.player.id}
-                    onClick={() => {
-                      if (onSelectPlayer) {
-                        onSelectPlayer(match.player);
-                      } else if (onUpdatePlayer) {
-                        onUpdatePlayer(match.player);
-                      }
-                      setIsSimilarModalOpen(false);
-                      onTriggerToast(`Perfil de ${match.player.name} selecionado (${match.similarityPercent}% de similaridade).`);
-                    }}
-                    className="bg-[#0e0e0f] border border-[#26262B] hover:border-[#ff535b] rounded-xl p-3.5 flex items-center justify-between gap-3 transition-all hover:bg-[#1f1e21] cursor-pointer group shadow-sm"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      {/* Avatar */}
-                      <div className="relative shrink-0">
-                        <Avatar
-                          name={match.player.name}
-                          className="w-12 h-12 text-xs border border-[#353436] group-hover:border-[#ff535b] transition-colors shrink-0"
-                        />
-                        <span className="absolute -bottom-1 -right-1 text-xs">
-                          {match.player.flag || '⚽'}
-                        </span>
-                      </div>
-
-                      {/* Info */}
-                      <div className="min-w-0 flex flex-col">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-extrabold text-[#e5e2e3] group-hover:text-[#ffb3b1] truncate transition-colors">
-                            {match.player.name}
-                          </span>
-                          <span className="bg-[#ff535b]/20 text-[#ff535b] px-1.5 py-0.2 rounded text-[10px] font-bold border border-[#ff535b]/40">
-                            {match.player.position}
-                          </span>
-                        </div>
-                        <span className="text-xs text-[#e4bebc] font-mono-data truncate mt-0.5">
-                          {getPlayerAge(match.player)} anos • {match.player.club || 'Sem Clube'} ({match.player.league || 'Liga Portugal'})
-                        </span>
-
-                        {/* Matched Criteria Badges */}
-                        <div className="flex flex-wrap gap-1 mt-1.5">
-                          {match.matchedCriteria.map((crit, idx) => (
-                            <span
-                              key={idx}
-                              className="text-[9.5px] bg-[#1c1b1c] text-[#74c69d] border border-[#2d6a4f]/50 px-1.5 py-0.2 rounded font-mono-data"
-                            >
-                              ✓ {crit}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right side: Similarity % & Rating */}
-                    <div className="flex flex-col items-end shrink-0 gap-1.5">
-                      <div className="bg-[#ff535b]/15 text-[#ffb3b1] border border-[#ff535b]/40 px-2.5 py-1 rounded-full text-xs font-mono-data font-extrabold flex items-center gap-1 shadow-[0_0_10px_rgba(255,83,91,0.2)]">
-                        <span className="material-symbols-outlined text-[13px]">auto_awesome</span>
-                        <span>{match.similarityPercent}%</span>
-                      </div>
-                      <div className="bg-[#18181A] px-2 py-0.5 rounded-md border border-[#26262B]">
-                        <StarRating value={match.player.rating} size="xs" variant="single" />
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="p-8 text-center text-[#e4bebc] bg-[#0e0e0f] rounded-xl border border-[#26262B]">
-                  <span className="material-symbols-outlined text-[32px] text-[#ff535b]/60 mb-2">search_off</span>
-                  <p className="text-xs font-medium">
-                    Nenhum atleta na base cumpre simultaneamente 3 dos 4 critérios de similaridade para {player.name}.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Modal Footer */}
-            <div className="flex justify-between items-center pt-2 border-t border-[#26262B]">
-              <span className="text-[11px] text-[#e4bebc] italic">
-                Cruzamento de dados baseado em {allPlayersList.length} atletas na base global.
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsSimilarModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-[#26262B] text-[#e4bebc] hover:text-white text-xs font-bold transition-all cursor-pointer"
-              >
-                Fechar
-              </button>
-            </div>
           </div>
         </div>
       )}
