@@ -351,11 +351,14 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
     onTriggerToast(`Relatório PDF completo de ${player.name} descarregado com sucesso.`);
   };
 
-  const handleOpenWyscout = () => {
-    onTriggerToast(`A abrir plataforma Wyscout para observação de vídeo de ${player.name}...`);
-    if (player.wyscoutUrl) {
-      window.open(player.wyscoutUrl, '_blank');
-    }
+  const handleOpenWyscout = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const url =
+      player.wyscoutUrl && player.wyscoutUrl.trim().length > 0
+        ? player.wyscoutUrl
+        : `https://wyscout.com`;
+    onTriggerToast(`A abrir perfil no Wyscout de ${player.name}...`);
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const handleOpenTransfermarkt = (e?: React.MouseEvent) => {
@@ -461,6 +464,17 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
                   title={`Aceder ao perfil de ${player.name} no zerozero`}
                 >
                   <span>ZZ</span>
+                  <span className="material-symbols-outlined text-[13px] text-[#e4bebc] group-hover:text-[#ff535b] transition-colors duration-200">
+                    open_in_new
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenWyscout}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono-data font-bold bg-[#141416] hover:bg-[#26262B] text-[#e4bebc] hover:text-[#ff535b] border border-[#353436] hover:border-[#ff535b]/60 transition-all duration-200 cursor-pointer shadow-sm group"
+                  title={`Aceder ao perfil de ${player.name} no Wyscout`}
+                >
+                  <span>WY</span>
                   <span className="material-symbols-outlined text-[13px] text-[#e4bebc] group-hover:text-[#ff535b] transition-colors duration-200">
                     open_in_new
                   </span>
@@ -756,9 +770,10 @@ export const PlayerSlideOver: React.FC<PlayerSlideOverProps> = ({
 
               <button
                 onClick={handleOpenWyscout}
-                className="bg-[#141416] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] py-2 px-2 rounded-lg flex items-center justify-center gap-1 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
+                className="bg-[#141416] hover:bg-[#26262B] border border-[#26262B] text-[#e5e2e3] hover:text-[#ff535b] py-2 px-2 rounded-lg flex items-center justify-center gap-1 text-xs font-bold transition-colors cursor-pointer h-auto min-h-[38px]"
+                title={`Aceder ao perfil de ${player.name} no Wyscout`}
               >
-                <span className="material-symbols-outlined text-[16px]">play_circle</span>
+                <span className="material-symbols-outlined text-[16px]">open_in_new</span>
                 <span>Wyscout</span>
               </button>
 

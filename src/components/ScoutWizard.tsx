@@ -610,12 +610,13 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({ onCancel, onSavePlayer
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#e4bebc] uppercase tracking-wider">Link Wyscout Video</label>
+                <label className="text-xs font-bold text-[#e4bebc] uppercase tracking-wider">Link Wyscout</label>
                 <input
-                  type="text"
+                  type="url"
                   value={wyscoutUrl}
                   onChange={(e) => setWyscoutUrl(e.target.value)}
-                  className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] px-3 py-2 text-sm font-mono-data focus:border-[#98cdf2] outline-none"
+                  placeholder="https://wyscout.com/..."
+                  className="w-full rounded bg-[#0A0A0B] border border-[#26262B] text-[#e5e2e3] px-3 py-2 text-sm font-mono-data focus:border-[#ff535b] outline-none"
                 />
               </div>
             </div>
