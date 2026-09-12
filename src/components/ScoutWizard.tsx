@@ -139,13 +139,14 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 flex flex-col gap-6">
           {/* Section 1: Dados Pessoais & Gerais */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             <h3 className="text-xs font-bold text-[#ffb3b1] uppercase tracking-wider border-b border-[#26262B] pb-1">
               DADOS PESSOAIS & GERAIS
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2">
+            {/* Row 1: Nome Completo & Posição Principal */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
                   Nome Completo <span className="text-[#ff535b]">*</span>
                 </label>
@@ -159,14 +160,14 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({
                 />
               </div>
 
-              <div className="md:col-span-1">
+              <div>
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
-                  Posição Principal
+                  Posição Principal <span className="text-[#ff535b]">*</span>
                 </label>
                 <select
                   value={position}
                   onChange={(e) => setPosition(e.target.value as PositionCode)}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b] cursor-pointer"
+                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b] cursor-pointer font-bold"
                 >
                   <option value="PL">Ponta de Lança (PL)</option>
                   <option value="EE">Extremo Esquerdo (EE)</option>
@@ -180,7 +181,10 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({
                   <option value="GR">Guarda-Redes (GR)</option>
                 </select>
               </div>
+            </div>
 
+            {/* Row 2 & 3: Restantes Dados Pessoais */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
                   Data de Nascimento

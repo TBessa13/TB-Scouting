@@ -28,7 +28,6 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
 
   // Form state for creating a new player
   const [name, setName] = useState('');
-  const [shortName, setShortName] = useState('');
   const [position, setPosition] = useState<PositionCode>('MC');
   const [birthDate, setBirthDate] = useState('2001-08-20');
   const [nationality, setNationality] = useState('Portugal');
@@ -75,7 +74,7 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
     const newPlayer: Player = {
       id: `sq_created_${Date.now()}`,
       name: name.trim(),
-      shortName: shortName.trim() || name.trim().split(' ')[0],
+      shortName: (name.split(' ').pop() || name).trim(),
       birthDate: birthDate || '2001-08-20',
       age: calculateAge(birthDate),
       heightCm: 182,
@@ -239,19 +238,6 @@ export const AddSquadPlayerModal: React.FC<AddSquadPlayerModalProps> = ({
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Ex: Evanilson"
-                    className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
-                    Nome Abreviado
-                  </label>
-                  <input
-                    type="text"
-                    value={shortName}
-                    onChange={(e) => setShortName(e.target.value)}
                     placeholder="Ex: Evanilson"
                     className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
                   />
