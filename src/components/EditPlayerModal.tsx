@@ -19,7 +19,6 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
   if (!isOpen) return null;
 
   const [name, setName] = useState(player.name);
-  const [shortName, setShortName] = useState(player.shortName || '');
   const [position, setPosition] = useState<PositionCode>(player.position);
   const [birthDate, setBirthDate] = useState(player.birthDate || '2002-05-14');
   const [heightCm, setHeightCm] = useState<number | ''>(player.heightCm || 180);
@@ -82,7 +81,7 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
     const updatedPlayer: Player = {
       ...player,
       name: name.trim(),
-      shortName: shortName.trim() || (name.split(' ').pop() || name).trim(),
+      shortName: (name.split(' ').pop() || name).trim(),
       birthDate,
       age: calculateAge(birthDate),
       heightCm: Number(heightCm) || 180,
@@ -142,8 +141,10 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Nome Completo</label>
+              <div className="md:col-span-2">
+                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
+                  Nome Completo <span className="text-[#ff535b]">*</span>
+                </label>
                 <input
                   type="text"
                   value={name}
@@ -153,22 +154,12 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Nome Curto / Abreviado</label>
-                <input
-                  type="text"
-                  value={shortName}
-                  onChange={(e) => setShortName(e.target.value)}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
-                />
-              </div>
-
-              <div>
+              <div className="md:col-span-1">
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Posição Principal</label>
                 <select
                   value={position}
                   onChange={(e) => setPosition(e.target.value as PositionCode)}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
+                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b] cursor-pointer"
                 >
                   <option value="PL">Ponta de Lança (PL)</option>
                   <option value="EE">Extremo Esquerdo (EE)</option>
@@ -208,7 +199,7 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
                 <select
                   value={dominantFoot}
                   onChange={(e) => setDominantFoot(e.target.value as 'Direito' | 'Esquerdo' | 'Ambidestro')}
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
+                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b] cursor-pointer"
                 >
                   <option value="Direito">Direito</option>
                   <option value="Esquerdo">Esquerdo</option>
@@ -216,7 +207,7 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
                 </select>
               </div>
 
-              <div className="md:col-span-2">
+              <div className="md:col-span-3">
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">Nacionalidade / Bandeira</label>
                 <div className="flex gap-2">
                   <select
@@ -226,7 +217,7 @@ export const EditPlayerModal: React.FC<EditPlayerModalProps> = ({
                       setNationality(val);
                       setFlag(getFlagForNationality(val));
                     }}
-                    className="flex-1 bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
+                    className="flex-1 bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b] cursor-pointer"
                   >
                     {NATIONALITY_OPTIONS.map((n) => (
                       <option key={n.name} value={n.name}>

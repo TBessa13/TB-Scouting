@@ -16,7 +16,6 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({
 }) => {
   // Form Fields - Personal & General
   const [name, setName] = useState('');
-  const [shortName, setShortName] = useState('');
   const [position, setPosition] = useState<PositionCode>('PL');
   const [birthDate, setBirthDate] = useState('2002-05-14');
   const [heightCm, setHeightCm] = useState<number | ''>(182);
@@ -73,7 +72,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({
     const newPlayer: Player = {
       id: `p_${Date.now()}`,
       name: name.trim(),
-      shortName: shortName.trim() || (name.split(' ').pop() || name).trim(),
+      shortName: (name.split(' ').pop() || name).trim(),
       birthDate,
       age: calculatedAge,
       heightCm: Number(heightCm) || 180,
@@ -146,7 +145,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
+              <div className="md:col-span-2">
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
                   Nome Completo <span className="text-[#ff535b]">*</span>
                 </label>
@@ -160,20 +159,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
-                  Nome Curto / Abreviado
-                </label>
-                <input
-                  type="text"
-                  value={shortName}
-                  onChange={(e) => setShortName(e.target.value)}
-                  placeholder="Ex: D. Costa"
-                  className="w-full bg-[#0e0e0f] border border-[#353436] text-[#e5e2e3] text-xs rounded-xl px-3 py-2 outline-none focus:border-[#ff535b]"
-                />
-              </div>
-
-              <div>
+              <div className="md:col-span-1">
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
                   Posição Principal
                 </label>
@@ -235,7 +221,7 @@ export const ScoutWizard: React.FC<ScoutWizardProps> = ({
                 </select>
               </div>
 
-              <div className="md:col-span-2">
+              <div className="md:col-span-3">
                 <label className="block text-[11px] font-bold text-[#e4bebc] uppercase mb-1">
                   Nacionalidade / Bandeira
                 </label>
