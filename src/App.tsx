@@ -37,6 +37,7 @@ import { GlobalPlayersView } from './components/GlobalPlayersView';
 import { CurrentSquadView } from './components/CurrentSquadView';
 import { TeamAuditView } from './components/TeamAuditView';
 import { OverviewView } from './components/OverviewView';
+import { exportShadowTeamListPdf } from './utils/pdfExport';
 
 export default function App() {
   const [mainView, setMainView] = useState<MainView>('overview');
@@ -365,6 +366,20 @@ export default function App() {
     setToastMessage(`Novo perfil de ${newPlayer.name} adicionado e salvo no Supabase com sucesso!`);
   };
 
+  const handleExportShadowTeamListPdf = () => {
+    if (players.length === 0) {
+      setToastMessage(`A Shadow Team "${activeTeam?.name || 'Selecionada'}" não possui jogadores registados.`);
+      return;
+    }
+    try {
+      exportShadowTeamListPdf(activeTeam?.name || 'Shadow Team', players, ratingSystem);
+      setToastMessage(`PDF da lista "${activeTeam?.name || 'Shadow Team'}" descarregado com sucesso!`);
+    } catch (err) {
+      console.error('Erro ao exportar PDF da Shadow Team:', err);
+      setToastMessage('Erro ao gerar o PDF da lista de atletas.');
+    }
+  };
+
   const handleAddPlayerToSquad = (player: Player) => {
     saveNewPlayerToDb(player, true);
 
@@ -574,6 +589,18 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Exportar PDF Button (visible when subView === 'list') */}
+                {subView === 'list' && (
+                  <button
+                    onClick={handleExportShadowTeamListPdf}
+                    className="bg-[#26262B] text-[#e5e2e3] border border-[#353436] hover:bg-[#ff535b] hover:border-[#ff535b] hover:text-white px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md active:scale-95"
+                    title="Exportar Lista de Atletas para PDF"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                    <span>Exportar PDF</span>
+                  </button>
+                )}
+
                 {/* Primary Action Button: + NOVO ALVO */}
                 <button
                   onClick={() => setMainView('wizard')}
@@ -594,6 +621,8 @@ export default function App() {
                 defaultFormation={defaultFormation}
                 onFormationChange={setDefaultFormation}
                 ratingSystem={ratingSystem}
+                teamName={activeTeam?.name}
+                onTriggerToast={setToastMessage}
               />
             ) : (
               <GlobalPlayersView

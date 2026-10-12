@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import { Player, FormationName, TacticalSlot, RatingSystem, getDisplayRating, getPlayerAge } from '../types';
 import { FORMATION_SLOTS } from '../data/formationSlots';
 import { StarRating } from './StarRating';
@@ -25,6 +25,8 @@ interface TacticalPitchProps {
   onFormationChange?: (formation: FormationName) => void;
   onAssignPlayerToSlot?: (slotId: string, playerId: string) => void;
   ratingSystem?: RatingSystem;
+  teamName?: string;
+  onTriggerToast?: (msg: string) => void;
 }
 
 export const TacticalPitch: React.FC<TacticalPitchProps> = ({
@@ -34,6 +36,8 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
   defaultFormation = '4-2-3-1',
   onFormationChange,
   ratingSystem = '20' as RatingSystem,
+  teamName,
+  onTriggerToast,
 }) => {
   const [formation, setFormation] = useState<FormationName>(defaultFormation);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
@@ -199,7 +203,7 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
 
     try {
       // Pause to allow React to re-render pitch cards into collapsed mode for PDF
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 250));
 
       const pdf = new jsPDF({
         orientation: 'landscape',
@@ -215,22 +219,29 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
         scale: 2,
         backgroundColor: '#0c1410',
         useCORS: true,
+        allowTaint: true,
         logging: false,
       });
 
       // PDF Page 1 Header
       pdf.setFillColor(28, 27, 28);
       pdf.rect(0, 0, pdfWidth, 18, 'F');
+      pdf.setFillColor(255, 83, 91);
+      pdf.rect(0, 17.5, pdfWidth, 1, 'F');
+
       pdf.setTextColor(229, 226, 227);
-      pdf.setFontSize(13);
+      pdf.setFontSize(12);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(`Campo Tático & Matriz de Sucessão (${formation})`, 10, 11);
+      const headerTitle = teamName
+        ? `Campo Tático & Matriz (${formation}) - ${teamName.toUpperCase()}`
+        : `Campo Tático & Matriz de Sucessão (${formation})`;
+      pdf.text(headerTitle, 10, 11);
 
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(228, 190, 188);
       pdf.text(
-        `Modo: ${viewMode === 'depth' ? 'Profundidade (Listas)' : 'Compacta'} | Data: ${new Date().toLocaleDateString('pt-PT')}`,
+        `Modo: ${viewMode === 'depth' ? 'Profundidade' : 'Compacta'} | Data: ${new Date().toLocaleDateString('pt-PT')}`,
         pdfWidth - 10,
         11,
         { align: 'right' }
@@ -255,44 +266,57 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
 
       // Annex Page 2 (if overflow players exist)
       if (hasOverflow && annexRef.current) {
-        const annexCanvas = await html2canvas(annexRef.current, {
-          scale: 2,
-          backgroundColor: '#1c1b1c',
-          useCORS: true,
-          logging: false,
-        });
+        try {
+          const annexCanvas = await html2canvas(annexRef.current, {
+            scale: 2,
+            backgroundColor: '#1c1b1c',
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+          });
 
-        pdf.addPage('a4', 'landscape');
+          pdf.addPage('a4', 'landscape');
 
-        // Annex Header
-        pdf.setFillColor(28, 27, 28);
-        pdf.rect(0, 0, pdfWidth, 18, 'F');
-        pdf.setTextColor(255, 83, 91);
-        pdf.setFontSize(13);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(`ANEXO: Atletas Excedentes / Profundidade Adicional`, 10, 11);
+          // Annex Header
+          pdf.setFillColor(28, 27, 28);
+          pdf.rect(0, 0, pdfWidth, 18, 'F');
+          pdf.setFillColor(255, 83, 91);
+          pdf.rect(0, 17.5, pdfWidth, 1, 'F');
 
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(228, 190, 188);
-        pdf.text(`Página 2 de 2`, pdfWidth - 10, 11, { align: 'right' });
+          pdf.setTextColor(255, 83, 91);
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(`ANEXO: Atletas Excedentes / Profundidade Adicional`, 10, 11);
 
-        const imgData2 = annexCanvas.toDataURL('image/png');
-        let renderWidth2 = pdfWidth - 20;
-        let renderHeight2 = (annexCanvas.height * renderWidth2) / annexCanvas.width;
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(228, 190, 188);
+          pdf.text(`Página 2 de 2`, pdfWidth - 10, 11, { align: 'right' });
 
-        if (renderHeight2 > maxImgHeight) {
-          renderHeight2 = maxImgHeight;
-          renderWidth2 = (annexCanvas.width * renderHeight2) / annexCanvas.height;
+          const imgData2 = annexCanvas.toDataURL('image/png');
+          let renderWidth2 = pdfWidth - 20;
+          let renderHeight2 = (annexCanvas.height * renderWidth2) / annexCanvas.width;
+
+          if (renderHeight2 > maxImgHeight) {
+            renderHeight2 = maxImgHeight;
+            renderWidth2 = (annexCanvas.width * renderHeight2) / annexCanvas.height;
+          }
+
+          const xPos2 = (pdfWidth - renderWidth2) / 2;
+          pdf.addImage(imgData2, 'PNG', xPos2, marginTop, renderWidth2, renderHeight2);
+        } catch (annexErr) {
+          console.warn('Aviso: Não foi possível anexar página de excedentes ao PDF:', annexErr);
         }
-
-        const xPos2 = (pdfWidth - renderWidth2) / 2;
-        pdf.addImage(imgData2, 'PNG', xPos2, marginTop, renderWidth2, renderHeight2);
       }
 
-      pdf.save(`campo_tatico_shadow_xi_${formation.toLowerCase()}.pdf`);
+      const safeName = teamName
+        ? teamName.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_')
+        : 'shadow_xi';
+      pdf.save(`campo_tatico_${safeName}_${formation.toLowerCase().replace(/[^a-z0-9]/g, '_')}.pdf`);
+      onTriggerToast?.('PDF do Campo Tático descarregado com sucesso!');
     } catch (err) {
-      console.error('Erro ao exportar PDF:', err);
+      console.error('Erro ao exportar PDF do campo tático:', err);
+      alert('Ocorreu um erro ao gerar o PDF do Campo Tático. Por favor, tente novamente.');
     } finally {
       setIsPdfExportingCollapsedOverride(false);
       setIsExportingPdf(false);
@@ -844,9 +868,9 @@ export const TacticalPitch: React.FC<TacticalPitchProps> = ({
         </div>
       </div>
 
-      {/* HIDDEN ANNEX CONTAINER FOR PDF EXPORT */}
+      {/* OFF-SCREEN ANNEX CONTAINER FOR PDF EXPORT */}
       {hasOverflow && (
-        <div className="hidden">
+        <div className="fixed -left-[99999px] top-0 pointer-events-none" aria-hidden="true">
           <div
             ref={annexRef}
             className="p-8 bg-[#1c1b1c] text-[#e5e2e3] flex flex-col gap-6 w-[1100px]"
